@@ -206,3 +206,13 @@ codex exec --model <route.model_id> <worker brief>
 ```
 
 Set `mode: "execute"` to run the command through a process runner. API executor credentials stay in executor packages through `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, or explicit options. Router packages still do not own credentials, network calls, or subprocesses.
+
+## Execution Reports
+
+Execution logs can be persisted with the JSONL execution log store and summarized from the command line:
+
+```text
+PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH pnpm run report -- path/to/execution-log.jsonl
+```
+
+The report includes run counts, completed runs, failed worker results, total duration, token totals, total cost, and provider-level cost/failure summaries.

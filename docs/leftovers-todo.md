@@ -37,7 +37,7 @@ Current next priority:
 
 ```text
 1. Other platform integrations
-2. Eval dashboards/reporting over persisted logs
+2. Eval dashboards over persisted logs
 3. Additional platform plugins
 ```
 
@@ -133,6 +133,8 @@ codex exec --model <route.model_id>
 - [x] Add in-memory structured execution log store and completed-run records.
 
 - [x] Persist structured execution logs with a JSONL execution log store.
+
+- [x] Add CLI reporting over persisted execution logs.
 
 - [x] Extract provider token usage and cost from executor responses.
 

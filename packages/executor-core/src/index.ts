@@ -24,6 +24,13 @@ export { ExecutorTimeoutError, MissingReviewExecutorError } from "./errors.js"
 export { estimateTokenCost, type TokenCost, type TokenUsage } from "./cost.js"
 
 export {
+  formatExecutionEvalReport,
+  summarizeExecutionLogs,
+  type ExecutionEvalReport,
+  type ProviderEvalSummary
+} from "./eval-report.js"
+
+export {
   createJsonlExecutionLogStore,
   createMemoryExecutionLogStore,
   systemExecutionClock,

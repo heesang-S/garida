@@ -29,7 +29,7 @@
 - Create: `packages/executor-core/tests/eval-report.test.ts`
 - Modify: `packages/executor-core/src/index.ts`
 
-- [ ] **Step 1: Write failing summary test**
+- [x] **Step 1: Write failing summary test**
 
 Create a Vitest test that builds two `ExecutionLogEntry` objects and expects:
 
@@ -46,7 +46,7 @@ expect(report.by_provider).toEqual([
 ])
 ```
 
-- [ ] **Step 2: Run test and verify red**
+- [x] **Step 2: Run test and verify red**
 
 Run:
 
@@ -56,7 +56,7 @@ PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm --filter 
 
 Expected: FAIL because `summarizeExecutionLogs` does not exist.
 
-- [ ] **Step 3: Implement summary types and function**
+- [x] **Step 3: Implement summary types and function**
 
 Add:
 
@@ -81,7 +81,7 @@ export type ExecutionEvalReport = {
 export function summarizeExecutionLogs(entries: readonly ExecutionLogEntry[]): ExecutionEvalReport
 ```
 
-- [ ] **Step 4: Run test and verify green**
+- [x] **Step 4: Run test and verify green**
 
 Run the same package test. Expected: PASS.
 
@@ -91,7 +91,7 @@ Run the same package test. Expected: PASS.
 - Modify: `packages/executor-core/src/eval-report.ts`
 - Modify: `packages/executor-core/tests/eval-report.test.ts`
 
-- [ ] **Step 1: Write failing formatter test**
+- [x] **Step 1: Write failing formatter test**
 
 Add a test for:
 
@@ -102,11 +102,11 @@ expect(formatExecutionEvalReport(report)).toContain("Total cost USD: 0.009")
 expect(formatExecutionEvalReport(report)).toContain("openai | runs=1 | worker_failures=0 | cost_usd=0.006")
 ```
 
-- [ ] **Step 2: Run test and verify red**
+- [x] **Step 2: Run test and verify red**
 
 Expected: FAIL because `formatExecutionEvalReport` does not exist.
 
-- [ ] **Step 3: Implement formatter**
+- [x] **Step 3: Implement formatter**
 
 Add:
 
@@ -116,7 +116,7 @@ export function formatExecutionEvalReport(report: ExecutionEvalReport): string
 
 The format must be plain text and deterministic.
 
-- [ ] **Step 4: Run test and verify green**
+- [x] **Step 4: Run test and verify green**
 
 Expected: PASS.
 
@@ -128,7 +128,7 @@ Expected: PASS.
 - Modify: `packages/executor-core/package.json`
 - Modify: root `package.json`
 
-- [ ] **Step 1: Write failing CLI smoke test**
+- [x] **Step 1: Write failing CLI smoke test**
 
 Create a temp JSONL file with two execution entries. Run:
 
@@ -141,7 +141,7 @@ expect(result.status).toBe(0)
 expect(result.stdout).toContain("Execution Eval Report")
 ```
 
-- [ ] **Step 2: Run test and verify red**
+- [x] **Step 2: Run test and verify red**
 
 Run:
 
@@ -152,7 +152,7 @@ PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm --filter 
 
 Expected: FAIL because the CLI file does not exist.
 
-- [ ] **Step 3: Implement CLI**
+- [x] **Step 3: Implement CLI**
 
 The CLI should:
 
@@ -161,7 +161,7 @@ The CLI should:
 3. print `formatExecutionEvalReport(summarizeExecutionLogs(entries))`
 4. exit `1` with usage text when no path is provided
 
-- [ ] **Step 4: Add scripts**
+- [x] **Step 4: Add scripts**
 
 Add:
 
@@ -177,7 +177,7 @@ to `packages/executor-core/package.json`, and:
 
 to root `package.json`.
 
-- [ ] **Step 5: Run test and verify green**
+- [x] **Step 5: Run test and verify green**
 
 Expected: PASS.
 
@@ -187,7 +187,7 @@ Expected: PASS.
 - Modify: `README.md`
 - Modify: `docs/leftovers-todo.md`
 
-- [ ] **Step 1: Document usage**
+- [x] **Step 1: Document usage**
 
 Add README usage:
 
@@ -195,11 +195,11 @@ Add README usage:
 PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH pnpm run report -- path/to/execution-log.jsonl
 ```
 
-- [ ] **Step 2: Update checklist**
+- [x] **Step 2: Update checklist**
 
 Mark eval reporting over persisted logs complete in `docs/leftovers-todo.md`.
 
-- [ ] **Step 3: Full verification**
+- [x] **Step 3: Full verification**
 
 Run:
 
@@ -211,7 +211,7 @@ PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm build
 
 Expected: all pass.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add docs/superpowers/plans/2026-07-01-eval-reporting.md packages/executor-core README.md docs/leftovers-todo.md package.json
