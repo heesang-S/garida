@@ -157,6 +157,33 @@ describe("runExecutionPlan", () => {
     ])
   })
 
+  it("does not retry worker execution when the retry classifier marks an error fatal", async () => {
+    let calls = 0
+    const executor: AgentExecutor = {
+      provider: "mock",
+      async executeWorker(): Promise<WorkerResult> {
+        calls += 1
+        throw new Error("auth failed")
+      }
+    }
+
+    await expect(
+      runExecutionPlan({
+        execution_plan: directExecutionPlan,
+        route,
+        executor,
+        retry_policy: {
+          max_attempts: 3,
+          delay_ms: 0,
+          classify_error(): "fatal" {
+            return "fatal"
+          }
+        }
+      })
+    ).rejects.toThrow("auth failed")
+    expect(calls).toBe(1)
+  })
+
   it("fails worker execution when timeout expires", async () => {
     vi.useFakeTimers()
     const executor: AgentExecutor = {

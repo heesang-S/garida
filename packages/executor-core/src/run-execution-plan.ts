@@ -21,7 +21,10 @@ export type ExecutorRunContext = {
 export type RetryPolicy = {
   readonly max_attempts: number
   readonly delay_ms: number
+  readonly classify_error?: (error: unknown) => RetryClassification
 }
+
+export type RetryClassification = "retryable" | "fatal"
 
 export type TimeoutPolicy = {
   readonly worker_timeout_ms?: number
@@ -193,7 +196,8 @@ async function runWithPolicies<T>(policyInput: PolicyRunInput<T>): Promise<T> {
       emit(policyInput, policyInput.succeeded_type, attempt, "succeeded")
       return result
     } catch (error) {
-      if (attempt >= maxAttempts) {
+      const classification = retryPolicy.classify_error?.(error) ?? "retryable"
+      if (classification === "fatal" || attempt >= maxAttempts) {
         emit(policyInput, policyInput.failed_type, attempt, errorMessage(error))
         throw error
       }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { createAnthropicExecutor } from "../src/index.js"
+import { classifyAnthropicResponseStatus, createAnthropicExecutor } from "../src/index.js"
 import type { ProviderRequest, ProviderTransport } from "../src/index.js"
 import type { ExecutorRunContext } from "@model-orchestration/executor-core"
 import type { RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
@@ -38,6 +38,13 @@ const context: ExecutorRunContext = {
 }
 
 describe("createAnthropicExecutor", () => {
+  it("classifies Anthropic retryable and fatal response statuses", () => {
+    expect(classifyAnthropicResponseStatus(429)).toBe("retryable")
+    expect(classifyAnthropicResponseStatus(529)).toBe("retryable")
+    expect(classifyAnthropicResponseStatus(401)).toBe("fatal")
+    expect(classifyAnthropicResponseStatus(400)).toBe("fatal")
+  })
+
   it("sends a Messages API request with the routed model", async () => {
     const requests: ProviderRequest[] = []
     const transport: ProviderTransport = {

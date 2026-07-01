@@ -11,6 +11,7 @@ export {
   type ExecutorRunContext,
   type ReviewResult,
   type ReviewResultStatus,
+  type RetryClassification,
   type RetryPolicy,
   type RunExecutionPlanInput,
   type TimeoutPolicy,

@@ -28,6 +28,8 @@ export type AnthropicExecutorOptions = {
   readonly transport?: ProviderTransport
 }
 
+export type ProviderRetryClassification = "retryable" | "fatal"
+
 const AnthropicResponseSchema = z
   .object({
     content: z.array(
@@ -78,6 +80,14 @@ export function createAnthropicExecutor(options: AnthropicExecutorOptions = {}):
       }
     }
   }
+}
+
+export function classifyAnthropicResponseStatus(status: number): ProviderRetryClassification {
+  if (status === 408 || status === 409 || status === 429 || status >= 500) {
+    return "retryable"
+  }
+
+  return "fatal"
 }
 
 async function sendAnthropicRequest(

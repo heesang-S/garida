@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { createOpenAIExecutor } from "../src/index.js"
+import { classifyOpenAIResponseStatus, createOpenAIExecutor } from "../src/index.js"
 import type { ProviderRequest, ProviderTransport } from "../src/index.js"
 import type { ExecutorRunContext } from "@model-orchestration/executor-core"
 import type { RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
@@ -38,6 +38,13 @@ const context: ExecutorRunContext = {
 }
 
 describe("createOpenAIExecutor", () => {
+  it("classifies OpenAI retryable and fatal response statuses", () => {
+    expect(classifyOpenAIResponseStatus(429)).toBe("retryable")
+    expect(classifyOpenAIResponseStatus(503)).toBe("retryable")
+    expect(classifyOpenAIResponseStatus(401)).toBe("fatal")
+    expect(classifyOpenAIResponseStatus(400)).toBe("fatal")
+  })
+
   it("sends a Responses API request with the routed model", async () => {
     const requests: ProviderRequest[] = []
     const transport: ProviderTransport = {

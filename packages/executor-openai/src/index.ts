@@ -26,6 +26,8 @@ export type OpenAIExecutorOptions = {
   readonly transport?: ProviderTransport
 }
 
+export type ProviderRetryClassification = "retryable" | "fatal"
+
 const OpenAIResponseSchema = z
   .object({
     output_text: z.string().optional(),
@@ -89,6 +91,14 @@ export function createOpenAIExecutor(options: OpenAIExecutorOptions = {}): Agent
       }
     }
   }
+}
+
+export function classifyOpenAIResponseStatus(status: number): ProviderRetryClassification {
+  if (status === 408 || status === 409 || status === 429 || status >= 500) {
+    return "retryable"
+  }
+
+  return "fatal"
 }
 
 async function sendOpenAIRequest(
