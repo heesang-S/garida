@@ -23,6 +23,7 @@ model-orchestration/
 │   ├── executor-openai/
 │   ├── executor-anthropic/
 │   ├── executor-codex/
+│   ├── executor-devin/
 │   └── executor-mock/
 ├── plugins/
 │   ├── codex-router/
@@ -304,6 +305,7 @@ executor-mock
 executor-codex
 executor-openai
 executor-anthropic
+executor-devin
 plugins/codex-router
 docs
 examples
@@ -325,7 +327,5 @@ PreparedAgentExecution
 
 Good follow-up work:
 
-- add persisted execution logs and cost/token accounting
-- add provider-specific retry classification
-- add a Devin executor only if Devin exposes usable runtime/model-selection APIs
+- replace the Devin unsupported stub with a real executor only if Devin exposes usable runtime/model-selection APIs
 - keep platform model-switching limitations documented in plugin and executor docs

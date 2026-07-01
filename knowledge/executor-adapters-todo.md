@@ -24,6 +24,7 @@ type AgentExecutor = {
 - `CodexExecutor`: dry-run command planner and optional process executor in `packages/executor-codex`.
 - `OpenAIExecutor`: OpenAI-compatible Responses API executor in `packages/executor-openai`.
 - `AnthropicExecutor`: Anthropic Messages API executor in `packages/executor-anthropic`.
+- `DevinExecutor`: deterministic unsupported stub in `packages/executor-devin` until Devin exposes usable runtime/model-selection APIs.
 
 The current Codex executor plans:
 
@@ -35,7 +36,6 @@ By default it does not spawn a process. Set `mode: "execute"` to use a process r
 
 ## Planned Adapters
 
-- `DevinExecutor`: documented stub unless Devin exposes model/runtime selection APIs.
 - Claude/Claude Code executor or plugin adapter, depending on available runtime hooks.
 
 ## Planned Cross-Cutting Contracts

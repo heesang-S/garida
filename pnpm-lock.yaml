@@ -91,6 +91,25 @@ importers:
         specifier: ^3.2.4
         version: 3.2.6(@types/node@24.13.2)
 
+  packages/executor-devin:
+    dependencies:
+      '@model-orchestration/executor-core':
+        specifier: workspace:*
+        version: link:../executor-core
+      '@model-orchestration/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.13.2
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.6(@types/node@24.13.2)
+
   packages/executor-mock:
     dependencies:
       '@model-orchestration/executor-core':

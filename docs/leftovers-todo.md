@@ -36,9 +36,9 @@ Recommended order:
 Current next priority:
 
 ```text
-1. Route-decision fixtures/eval logging
-2. Token/cost extraction from real executor responses
-3. Other platform integrations
+1. Durable eval/log persistence beyond the in-memory execution log store
+2. Other platform integrations
+3. Route-decision fixture snapshots
 ```
 
 ## Router Package Leftovers
@@ -130,9 +130,15 @@ codex exec --model <route.model_id>
 
 - [x] Add retry, timeout, cancellation, and logging contracts.
 
+- [x] Add in-memory structured execution log store and completed-run records.
+
 - [ ] Persist structured execution logs.
 
-- [ ] Extract provider token usage and cost from executor responses.
+- [x] Extract provider token usage and cost from executor responses.
+
+- [x] Add provider-specific retry classification.
+
+- [x] Create `packages/executor-devin` as an unsupported stub until usable Devin APIs exist.
 
 - [x] Keep credentials out of router packages.
 
