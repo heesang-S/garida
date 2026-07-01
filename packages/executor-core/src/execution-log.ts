@@ -1,3 +1,5 @@
+import { appendFile, mkdir, readFile } from "node:fs/promises"
+import { dirname } from "node:path"
 import type { ExecutionPlan, RouteDecision } from "@model-orchestration/shared-types"
 import type { ExecutionRunResult, ReviewResult, RunExecutionPlanInput, WorkerResult } from "./run-execution-plan.js"
 
@@ -39,6 +41,27 @@ export function createMemoryExecutionLogStore(): ExecutionLogStore {
       return [...entries]
     },
     async get(runId: string): Promise<ExecutionLogEntry | undefined> {
+      return entries.find((entry) => entry.run_id === runId)
+    }
+  }
+}
+
+export function createJsonlExecutionLogStore(filePath: string): ExecutionLogStore {
+  return {
+    async append(entry: ExecutionLogEntry): Promise<void> {
+      await mkdir(dirname(filePath), { recursive: true })
+      await appendFile(filePath, `${JSON.stringify(entry)}\n`, "utf8")
+    },
+    async list(): Promise<readonly ExecutionLogEntry[]> {
+      const content = await readLogFile(filePath)
+      return content
+        .split("\n")
+        .filter((line) => line.length > 0)
+        .map(parseJsonLine)
+        .filter(isExecutionLogEntry)
+    },
+    async get(runId: string): Promise<ExecutionLogEntry | undefined> {
+      const entries = await this.list()
       return entries.find((entry) => entry.run_id === runId)
     }
   }
@@ -86,4 +109,45 @@ export async function appendCompletedExecutionLog(
     ...baseEntry,
     review_result: result.review_result
   })
+}
+
+async function readLogFile(filePath: string): Promise<string> {
+  try {
+    return await readFile(filePath, "utf8")
+  } catch (error) {
+    if (isNodeErrorCode(error, "ENOENT")) {
+      return ""
+    }
+
+    throw error
+  }
+}
+
+function isExecutionLogEntry(value: unknown): value is ExecutionLogEntry {
+  return (
+    isRecord(value) &&
+    typeof value["run_id"] === "string" &&
+    value["status"] === "completed" &&
+    typeof value["provider"] === "string" &&
+    typeof value["model_id"] === "string" &&
+    isRecord(value["route"]) &&
+    isRecord(value["execution_plan"]) &&
+    Array.isArray(value["worker_results"]) &&
+    typeof value["synthesis_strategy"] === "string" &&
+    typeof value["started_at_ms"] === "number" &&
+    typeof value["completed_at_ms"] === "number" &&
+    typeof value["duration_ms"] === "number"
+  )
+}
+
+function parseJsonLine(line: string): unknown {
+  return JSON.parse(line)
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null
+}
+
+function isNodeErrorCode(error: unknown, code: string): boolean {
+  return error instanceof Error && "code" in error && error.code === code
 }

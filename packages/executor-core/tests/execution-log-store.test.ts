@@ -1,6 +1,9 @@
+import { mkdtemp } from "node:fs/promises"
+import { join } from "node:path"
+import { tmpdir } from "node:os"
 import { describe, expect, it } from "vitest"
 
-import { createMemoryExecutionLogStore, runExecutionPlan } from "../src/index.js"
+import { createJsonlExecutionLogStore, createMemoryExecutionLogStore, runExecutionPlan } from "../src/index.js"
 import type { AgentExecutor, ExecutorRunContext, WorkerResult } from "../src/index.js"
 import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
 
@@ -81,5 +84,44 @@ describe("execution log store", () => {
       synthesis_strategy: "Return direct result."
     })
     expect(entries[0]?.worker_results[0]?.output).toBe("gpt-5.4")
+  })
+
+  it("persists completed execution records to a JSONL file", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "executor-log-"))
+    const logPath = join(directory, "runs.jsonl")
+    const store = createJsonlExecutionLogStore(logPath)
+    const executor: AgentExecutor = {
+      provider: "mock",
+      async executeWorker(brief: WorkerBrief, context: ExecutorRunContext): Promise<WorkerResult> {
+        return {
+          worker_id: brief.id,
+          status: "succeeded",
+          output: context.route.model_id,
+          evidence: ["worker-called"]
+        }
+      }
+    }
+
+    await runExecutionPlan({
+      execution_plan: executionPlan,
+      route,
+      executor,
+      run_id: "run-jsonl",
+      clock: {
+        now(): number {
+          return 200
+        }
+      },
+      execution_log_store: store
+    })
+
+    const reopenedStore = createJsonlExecutionLogStore(logPath)
+    const entries = await reopenedStore.list()
+    expect(entries).toHaveLength(1)
+    expect(entries[0]?.run_id).toBe("run-jsonl")
+    expect(await reopenedStore.get("run-jsonl")).toMatchObject({
+      provider: "mock",
+      model_id: "gpt-5.4"
+    })
   })
 })

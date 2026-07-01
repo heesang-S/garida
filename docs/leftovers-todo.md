@@ -36,9 +36,9 @@ Recommended order:
 Current next priority:
 
 ```text
-1. Durable eval/log persistence beyond the in-memory execution log store
-2. Other platform integrations
-3. Route-decision fixture snapshots
+1. Other platform integrations
+2. Route-decision fixture snapshots
+3. Eval dashboards/reporting over persisted logs
 ```
 
 ## Router Package Leftovers
@@ -132,7 +132,7 @@ codex exec --model <route.model_id>
 
 - [x] Add in-memory structured execution log store and completed-run records.
 
-- [ ] Persist structured execution logs.
+- [x] Persist structured execution logs with a JSONL execution log store.
 
 - [x] Extract provider token usage and cost from executor responses.
 
