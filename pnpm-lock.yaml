@@ -243,6 +243,8 @@ importers:
 
   plugins/codex-router: {}
 
+  plugins/personal-agent-router: {}
+
 packages:
 
   '@esbuild/aix-ppc64@0.28.1':

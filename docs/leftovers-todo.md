@@ -152,7 +152,7 @@ codex exec --model <route.model_id>
 
 - [ ] Plan Devin plugin or integration.
 
-- [ ] Plan personal-agent plugin.
+- [x] Create personal-agent integration plan and implementation scaffold.
 
 - [ ] For each platform, document:
   - whether exact model switching is supported

@@ -1,0 +1,76 @@
+{
+  "route": {
+    "model_class": "strong",
+    "provider": "openai_codex",
+    "model_id": "gpt-5.4",
+    "pricing_usd_per_1m_tokens": {
+      "input": 1.25,
+      "cached_input": 0.125,
+      "output": 10
+    },
+    "delegate": false,
+    "add_reviewer": true,
+    "matched_rules": [
+      "coding-high-risk-review"
+    ],
+    "routing_reason": "High-risk coding work benefits from a strong model and review.",
+    "fallback": "If review execution is unavailable, continue with the worker result and flag the missing review."
+  },
+  "execution_plan": {
+    "execution_mode": "direct",
+    "worker_briefs": [
+      {
+        "id": "worker-primary",
+        "title": "Implement change",
+        "objective": "Implement the requested change in the repo.",
+        "model_class": "strong",
+        "provider": "openai_codex",
+        "model_id": "gpt-5.4",
+        "constraints": [
+          "Keep the change scoped to the requested feature.",
+          "Run targeted verification before reporting success."
+        ],
+        "expected_output": "A concise implementation summary with verification evidence.",
+        "acceptance_criteria": [
+          "Requested behavior is implemented.",
+          "Targeted tests pass."
+        ]
+      }
+    ],
+    "reviewer_brief": {
+      "id": "reviewer-primary",
+      "title": "Review implementation",
+      "objective": "Review the worker result for regressions and missing verification.",
+      "model_class": "strong",
+      "provider": "openai_codex",
+      "model_id": "gpt-5.4",
+      "constraints": [
+        "Focus on correctness, risk, and evidence."
+      ],
+      "expected_output": "A pass/fail review with concrete findings.",
+      "acceptance_criteria": [
+        "Any regression risk is called out clearly."
+      ]
+    },
+    "synthesis_strategy": "Combine the worker output with review findings into one final response."
+  },
+  "result": {
+    "worker_results": [
+      {
+        "worker_id": "worker-primary",
+        "status": "succeeded",
+        "output": "Implemented the change and verified the requested behavior.",
+        "evidence": [
+          "Updated files under plugins/personal-agent-router.",
+          "Targeted vitest suite passed."
+        ]
+      }
+    ],
+    "review_result": {
+      "reviewer_id": "reviewer-primary",
+      "status": "passed",
+      "output": "No regressions found in the scoped change.",
+      "findings": []
+    }
+  }
+}
