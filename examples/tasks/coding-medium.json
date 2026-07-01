@@ -1,0 +1,11 @@
+{
+  "task_type": "coding",
+  "complexity": "medium",
+  "risk": "medium",
+  "context_size": "medium",
+  "tool_need": "light",
+  "parallelizable": false,
+  "requires_subagents": false,
+  "confidence": 0.86,
+  "reasoning": "The task likely changes code and needs validation, but it is not broad enough for delegation."
+}

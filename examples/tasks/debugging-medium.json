@@ -1,0 +1,11 @@
+{
+  "task_type": "debugging",
+  "complexity": "medium",
+  "risk": "medium",
+  "context_size": "medium",
+  "tool_need": "heavy",
+  "parallelizable": false,
+  "requires_subagents": false,
+  "confidence": 0.84,
+  "reasoning": "The task requires investigation into incorrect behavior and likely needs tool-based verification."
+}

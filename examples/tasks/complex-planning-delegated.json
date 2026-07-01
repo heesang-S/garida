@@ -1,0 +1,23 @@
+{
+  "task_type": "planning",
+  "complexity": "high",
+  "risk": "medium",
+  "context_size": "large",
+  "tool_need": "light",
+  "parallelizable": true,
+  "requires_subagents": true,
+  "confidence": 0.88,
+  "reasoning": "The task spans multiple architecture areas and can be decomposed into independent planning lanes.",
+  "suggested_subtasks": [
+    {
+      "title": "Routing Architecture",
+      "objective": "Define the task assessment and model routing flow.",
+      "independent": true
+    },
+    {
+      "title": "Evaluation Architecture",
+      "objective": "Define benchmarks, metrics, and feedback loops.",
+      "independent": true
+    }
+  ]
+}

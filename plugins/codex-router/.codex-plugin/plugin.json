@@ -1,0 +1,26 @@
+{
+  "name": "codex-router",
+  "version": "0.1.0",
+  "description": "Route Codex tasks through the model router before execution.",
+  "author": {
+    "name": "HeeSang"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex Router",
+    "shortDescription": "Route Codex tasks by model cost, capability, delegation, and review needs.",
+    "longDescription": "Codex Router adds a routed-task skill and exposes the local model router MCP server so Codex can request route decisions and execution plans before doing complex or high-risk work.",
+    "developerName": "HeeSang",
+    "category": "Developer Tools",
+    "capabilities": [
+      "MCP Tools",
+      "Workflow",
+      "Model Routing"
+    ],
+    "defaultPrompt": [
+      "Route this task before implementation.",
+      "Use the model router to prepare an execution plan."
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}

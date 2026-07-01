@@ -1,0 +1,12 @@
+{
+  "task_type": "writing",
+  "complexity": "low",
+  "risk": "low",
+  "context_size": "small",
+  "tool_need": "none",
+  "parallelizable": false,
+  "requires_subagents": false,
+  "confidence": 0.95,
+  "reasoning": "This fixture should fail because it has an extra property.",
+  "model_class": "small_fast"
+}

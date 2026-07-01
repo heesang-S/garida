@@ -1,0 +1,11 @@
+{
+  "task_type": "testing",
+  "complexity": "medium",
+  "risk": "low",
+  "context_size": "medium",
+  "tool_need": "heavy",
+  "parallelizable": false,
+  "requires_subagents": false,
+  "confidence": 0.9,
+  "reasoning": "The task centers on test design or execution and needs tools, but it is not inherently parallel."
+}

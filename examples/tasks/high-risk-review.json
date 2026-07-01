@@ -1,0 +1,11 @@
+{
+  "task_type": "review",
+  "complexity": "medium",
+  "risk": "high",
+  "context_size": "medium",
+  "tool_need": "light",
+  "parallelizable": false,
+  "requires_subagents": false,
+  "confidence": 0.91,
+  "reasoning": "The task is review work with high failure consequences, so it needs stronger handling."
+}

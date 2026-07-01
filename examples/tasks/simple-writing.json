@@ -1,0 +1,11 @@
+{
+  "task_type": "writing",
+  "complexity": "low",
+  "risk": "low",
+  "context_size": "small",
+  "tool_need": "none",
+  "parallelizable": false,
+  "requires_subagents": false,
+  "confidence": 0.96,
+  "reasoning": "The task is a short writing request with no tool or delegation need."
+}

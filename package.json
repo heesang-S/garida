@@ -1,0 +1,27 @@
+{
+  "name": "model-orchestrating-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "api": "pnpm --filter @model-orchestration/router-http api",
+    "build": "pnpm -r --filter './packages/*' --filter './plugins/*' build",
+    "mcp": "pnpm --filter @model-orchestration/router-mcp mcp",
+    "route": "pnpm --filter @model-orchestration/router-core build && node packages/router-core/dist/src/cli.js",
+    "test": "pnpm -r --filter './packages/*' --filter './plugins/*' test",
+    "typecheck": "pnpm -r --filter './packages/*' --filter './plugins/*' typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "ajv": "^8.17.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@11.5.1",
+  "dependencies": {
+    "@hono/node-server": "^2.0.6",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "hono": "^4.12.27",
+    "zod": "^4.4.3"
+  }
+}

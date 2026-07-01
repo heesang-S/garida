@@ -1,0 +1,242 @@
+{
+  "version": "0.1.0",
+  "description": "Machine-readable base routing policy. LLMs may produce task assessments, but code should apply these rules deterministically.",
+  "routing_order": [
+    "high_risk_uses_strong",
+    "deep_debugging_uses_strong",
+    "high_complexity_planning_uses_strong",
+    "simple_low_risk_uses_small_fast",
+    "default_uses_standard"
+  ],
+  "model_rules": [
+    {
+      "id": "high_risk_uses_strong",
+      "priority": 10,
+      "when": {
+        "risk": ["high"]
+      },
+      "route": {
+        "model_class": "strong"
+      },
+      "reason": "High-risk tasks require the strongest model class."
+    },
+    {
+      "id": "deep_debugging_uses_strong",
+      "priority": 20,
+      "when": {
+        "task_type": ["debugging"],
+        "complexity": ["medium", "high"]
+      },
+      "route": {
+        "model_class": "strong"
+      },
+      "reason": "Medium or high complexity debugging needs deeper reasoning and careful verification."
+    },
+    {
+      "id": "high_complexity_planning_uses_strong",
+      "priority": 30,
+      "when": {
+        "task_type": ["planning"],
+        "complexity": ["high"]
+      },
+      "route": {
+        "model_class": "strong"
+      },
+      "reason": "High-complexity planning usually requires architecture-level judgment."
+    },
+    {
+      "id": "simple_low_risk_uses_small_fast",
+      "priority": 40,
+      "when": {
+        "complexity": ["low"],
+        "risk": ["low"],
+        "context_size_not": ["large"],
+        "tool_need_not": ["heavy"]
+      },
+      "route": {
+        "model_class": "small_fast"
+      },
+      "reason": "Simple, low-risk, low-tool tasks should use the cheapest capable model class."
+    },
+    {
+      "id": "default_uses_standard",
+      "priority": 1000,
+      "when": {
+        "always": true
+      },
+      "route": {
+        "model_class": "standard"
+      },
+      "reason": "Default useful-work route when no stronger or cheaper rule applies."
+    }
+  ],
+  "delegation_rules": [
+    {
+      "id": "low_complexity_does_not_delegate",
+      "priority": 10,
+      "when": {
+        "complexity": ["low"]
+      },
+      "route": {
+        "delegate": false
+      },
+      "reason": "Simple tasks usually cost more to coordinate than to solve directly."
+    },
+    {
+      "id": "non_parallel_work_does_not_delegate",
+      "priority": 20,
+      "when": {
+        "parallelizable": false
+      },
+      "route": {
+        "delegate": false
+      },
+      "reason": "Tightly coupled work should stay with one agent or a deterministic workflow."
+    },
+    {
+      "id": "complex_parallel_work_delegates",
+      "priority": 30,
+      "when": {
+        "complexity": ["high"],
+        "parallelizable": true,
+        "requires_subagents": true
+      },
+      "route": {
+        "delegate": true
+      },
+      "reason": "High-complexity parallel work can benefit from specialized sub-agents."
+    },
+    {
+      "id": "default_no_delegation",
+      "priority": 1000,
+      "when": {
+        "always": true
+      },
+      "route": {
+        "delegate": false
+      },
+      "reason": "Default to no delegation unless the task clearly benefits from it."
+    }
+  ],
+  "review_rules": [
+    {
+      "id": "high_risk_adds_reviewer",
+      "priority": 10,
+      "when": {
+        "risk": ["high"]
+      },
+      "route": {
+        "add_reviewer": true
+      },
+      "reason": "High-risk tasks need independent verification."
+    },
+    {
+      "id": "delegated_work_adds_reviewer",
+      "priority": 20,
+      "when": {
+        "delegate": true
+      },
+      "route": {
+        "add_reviewer": true
+      },
+      "reason": "Delegated work needs synthesis and review."
+    },
+    {
+      "id": "default_no_reviewer",
+      "priority": 1000,
+      "when": {
+        "always": true
+      },
+      "route": {
+        "add_reviewer": false
+      },
+      "reason": "Default to no reviewer for low-risk direct work."
+    }
+  ],
+  "fallback_rules": [
+    {
+      "id": "low_confidence_escalates",
+      "when": {
+        "confidence_below": 0.6
+      },
+      "action": "escalate_model_to_strong",
+      "reason": "Low task-assessment confidence means the initial route may be unreliable."
+    },
+    {
+      "id": "verification_failure_escalates",
+      "when": {
+        "verification_failed": true
+      },
+      "action": "escalate_model_to_strong",
+      "reason": "Failed verification means the chosen route was insufficient."
+    },
+    {
+      "id": "conflicting_requirements_ask_user",
+      "when": {
+        "requirements_conflict": true
+      },
+      "action": "ask_user_for_clarification",
+      "reason": "Routing should not guess when user requirements conflict."
+    }
+  ],
+  "route_decision_schema": {
+    "type": "object",
+    "required": [
+      "model_class",
+      "provider",
+      "model_id",
+      "pricing_usd_per_1m_tokens",
+      "delegate",
+      "add_reviewer",
+      "matched_rules",
+      "routing_reason",
+      "fallback"
+    ],
+    "properties": {
+      "model_class": {
+        "type": "string",
+        "enum": ["small_fast", "standard", "strong"]
+      },
+      "provider": {
+        "type": "string",
+        "enum": ["openai_codex", "anthropic_claude"]
+      },
+      "model_id": {
+        "type": "string"
+      },
+      "pricing_usd_per_1m_tokens": {
+        "type": "object",
+        "required": ["input", "cached_input", "output"],
+        "properties": {
+          "input": {
+            "type": "number"
+          },
+          "cached_input": {
+            "type": ["number", "null"]
+          },
+          "output": {
+            "type": "number"
+          }
+        }
+      },
+      "delegate": {
+        "type": "boolean"
+      },
+      "add_reviewer": {
+        "type": "boolean"
+      },
+      "matched_rules": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "routing_reason": {
+        "type": "string"
+      },
+      "fallback": {
+        "type": "string"
+      }
+    }
+  }
+}

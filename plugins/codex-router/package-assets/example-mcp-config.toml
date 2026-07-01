@@ -1,0 +1,4 @@
+[mcp_servers.model_router]
+command = "/Users/HeeSang/.nvm/versions/node/v24.16.0/bin/node"
+args = ["/Users/HeeSang/Desktop/dev/ai/garida/packages/router-mcp/dist/src/mcp-server.js"]
+startup_timeout_sec = 30

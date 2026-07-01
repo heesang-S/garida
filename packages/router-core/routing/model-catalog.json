@@ -1,0 +1,481 @@
+{
+  "version": "0.3.0",
+  "last_researched": "2026-06-26",
+  "purpose": "Model cost/performance catalog used by the deterministic router after LLM task classification.",
+  "routing_principle": "Choose the cheapest available model class that satisfies required quality, risk, context, and latency constraints.",
+  "data_quality": {
+    "provider_pricing": "official_openai_pricing_page",
+    "codex_app_model_availability": "current_codex_app_tool_metadata",
+    "benchmark_scores": "mixed_official_and_public_sources",
+    "quality_scores": "router_bootstrap_estimates_to_replace_with_project_eval_results"
+  },
+  "decision_thresholds": {
+    "required_quality_by_risk": {
+      "low": 0.72,
+      "medium": 0.82,
+      "high": 0.9
+    },
+    "context_required_by_context_size": {
+      "small": "small_to_medium",
+      "medium": "medium_to_large",
+      "large": "large"
+    },
+    "default_selection_rule": "Pick the lowest cost model class whose estimated task quality is at least the risk-adjusted required quality and whose context capacity covers the task."
+  },
+  "codex_app_available_models": {
+    "gpt-5.4-mini": {
+      "description": "Small, fast, and cost-efficient model for simpler coding tasks.",
+      "source": "current Codex app tool metadata exposed in this session"
+    },
+    "gpt-5.4": {
+      "description": "Strong model for everyday coding.",
+      "source": "current Codex app tool metadata exposed in this session"
+    },
+    "gpt-5.5": {
+      "description": "Frontier model for complex coding, research, and real-world work.",
+      "source": "current Codex app tool metadata exposed in this session"
+    }
+  },
+  "default_provider": "openai_codex",
+  "provider_routes": {
+    "openai_codex": {
+      "description": "Default provider route for models directly available in the current Codex project workflow.",
+      "models": {
+        "small_fast": {
+          "model_id": "gpt-5.4-mini",
+          "pricing_usd_per_1m_tokens": {
+            "input": 0.75,
+            "cached_input": 0.075,
+            "output": 4.5
+          }
+        },
+        "standard": {
+          "model_id": "gpt-5.4",
+          "pricing_usd_per_1m_tokens": {
+            "input": 2.5,
+            "cached_input": 0.25,
+            "output": 15.0
+          }
+        },
+        "strong": {
+          "model_id": "gpt-5.5",
+          "pricing_usd_per_1m_tokens": {
+            "input": 5.0,
+            "cached_input": 0.5,
+            "output": 30.0
+          }
+        }
+      }
+    },
+    "anthropic_claude": {
+      "description": "Claude provider route for equivalent capability tiers when Anthropic models are available.",
+      "models": {
+        "small_fast": {
+          "model_id": "claude-haiku-4-5",
+          "pricing_usd_per_1m_tokens": {
+            "input": 1.0,
+            "cached_input": 0.1,
+            "output": 5.0
+          }
+        },
+        "standard": {
+          "model_id": "claude-sonnet-4-6",
+          "pricing_usd_per_1m_tokens": {
+            "input": 3.0,
+            "cached_input": 0.3,
+            "output": 15.0
+          }
+        },
+        "strong": {
+          "model_id": "claude-opus-4-8",
+          "pricing_usd_per_1m_tokens": {
+            "input": 5.0,
+            "cached_input": 0.5,
+            "output": 25.0
+          }
+        }
+      }
+    }
+  },
+  "model_classes": {
+    "small_fast": {
+      "model_id": "gpt-5.4-mini",
+      "description": "Cheapest capable model class for simple, low-risk, easy-to-verify work.",
+      "cost_class": "low",
+      "latency_class": "low",
+      "reasoning_strength": "low",
+      "recommended_reasoning_effort": "low",
+      "context_capacity": "small_to_medium",
+      "allowed_risk": ["low"],
+      "api_pricing_usd_per_1m_tokens": {
+        "standard": {
+          "short_context": {
+            "input": 0.75,
+            "cached_input": 0.075,
+            "output": 4.5
+          },
+          "long_context": null
+        },
+        "batch": {
+          "short_context": {
+            "input": 0.375,
+            "cached_input": 0.0375,
+            "output": 2.25
+          },
+          "long_context": null
+        },
+        "flex": {
+          "short_context": {
+            "input": 0.375,
+            "cached_input": 0.0375,
+            "output": 2.25
+          },
+          "long_context": null
+        },
+        "priority": {
+          "short_context": {
+            "input": 1.5,
+            "cached_input": 0.15,
+            "output": 9.0
+          },
+          "long_context": null
+        }
+      },
+      "estimated_quality_scores": {
+        "coding": 0.68,
+        "debugging": 0.52,
+        "testing": 0.7,
+        "research": 0.64,
+        "writing": 0.82,
+        "planning": 0.6,
+        "review": 0.62,
+        "data_analysis": 0.64,
+        "conversation": 0.86
+      },
+      "best_for": [
+        "classification",
+        "formatting",
+        "simple writing",
+        "short summaries",
+        "simple transformations",
+        "low-risk test fixture generation"
+      ],
+      "avoid_for": [
+        "high-risk decisions",
+        "deep debugging",
+        "architecture",
+        "large-context synthesis",
+        "security review"
+      ],
+      "benchmark_notes": {
+        "public_quantitative_scores": null,
+        "note": "No stable public benchmark table was found for GPT-5.4-mini during this pass; quality scores are conservative bootstrap estimates."
+      }
+    },
+    "standard": {
+      "model_id": "gpt-5.4",
+      "description": "Default model class for normal multi-step reasoning, coding, analysis, and synthesis.",
+      "cost_class": "medium",
+      "latency_class": "medium",
+      "reasoning_strength": "medium_high",
+      "recommended_reasoning_effort": "medium",
+      "context_capacity": "large",
+      "allowed_risk": ["low", "medium"],
+      "api_pricing_usd_per_1m_tokens": {
+        "standard": {
+          "short_context": {
+            "input": 2.5,
+            "cached_input": 0.25,
+            "output": 15.0
+          },
+          "long_context": {
+            "input": 5.0,
+            "cached_input": 0.5,
+            "output": 22.5
+          }
+        },
+        "batch": {
+          "short_context": {
+            "input": 1.25,
+            "cached_input": 0.13,
+            "output": 7.5
+          },
+          "long_context": {
+            "input": 2.5,
+            "cached_input": 0.25,
+            "output": 11.25
+          }
+        },
+        "flex": {
+          "short_context": {
+            "input": 1.25,
+            "cached_input": 0.13,
+            "output": 7.5
+          },
+          "long_context": {
+            "input": 2.5,
+            "cached_input": 0.25,
+            "output": 11.25
+          }
+        },
+        "priority": {
+          "short_context": {
+            "input": 5.0,
+            "cached_input": 0.5,
+            "output": 30.0
+          },
+          "long_context": null
+        }
+      },
+      "estimated_quality_scores": {
+        "coding": 0.86,
+        "debugging": 0.82,
+        "testing": 0.84,
+        "research": 0.84,
+        "writing": 0.9,
+        "planning": 0.84,
+        "review": 0.82,
+        "data_analysis": 0.84,
+        "conversation": 0.92
+      },
+      "known_benchmark_scores": {
+        "GDPval_wins_or_ties": 0.83,
+        "SWE_Bench_Pro_public": 0.577,
+        "OSWorld_Verified": 0.75,
+        "Toolathlon": 0.546,
+        "BrowseComp": 0.827,
+        "spreadsheet_modeling_internal": 0.873,
+        "MMMU_Pro": 0.812
+      },
+      "best_for": [
+        "coding",
+        "testing",
+        "moderate debugging",
+        "moderate analysis",
+        "multi-step tasks",
+        "tool use",
+        "structured synthesis",
+        "medium-risk planning"
+      ],
+      "avoid_for": [
+        "very high-risk review",
+        "subtle race conditions",
+        "major architecture decisions",
+        "hard asynchronous agentic tasks"
+      ],
+      "benchmark_notes": {
+        "note": "Official GPT-5.4 release data reports strong professional-work, computer-use, coding, tool-use, and browsing benchmark results. Treat internal/product benchmarks as directionally useful, not universal guarantees."
+      }
+    },
+    "strong": {
+      "model_id": "gpt-5.5",
+      "description": "Most capable model class for ambiguous, high-risk, high-context, or judgment-heavy work.",
+      "cost_class": "high",
+      "latency_class": "medium_high",
+      "reasoning_strength": "high",
+      "recommended_reasoning_effort": "medium",
+      "context_capacity": "large",
+      "allowed_risk": ["low", "medium", "high"],
+      "api_pricing_usd_per_1m_tokens": {
+        "standard": {
+          "short_context": {
+            "input": 5.0,
+            "cached_input": 0.5,
+            "output": 30.0
+          },
+          "long_context": {
+            "input": 10.0,
+            "cached_input": 1.0,
+            "output": 45.0
+          }
+        },
+        "batch": {
+          "short_context": {
+            "input": 2.5,
+            "cached_input": 0.25,
+            "output": 15.0
+          },
+          "long_context": {
+            "input": 5.0,
+            "cached_input": 0.5,
+            "output": 22.5
+          }
+        },
+        "flex": {
+          "short_context": {
+            "input": 2.5,
+            "cached_input": 0.25,
+            "output": 15.0
+          },
+          "long_context": {
+            "input": 5.0,
+            "cached_input": 0.5,
+            "output": 22.5
+          }
+        },
+        "priority": {
+          "short_context": {
+            "input": 12.5,
+            "cached_input": 1.25,
+            "output": 75.0
+          },
+          "long_context": null
+        }
+      },
+      "estimated_quality_scores": {
+        "coding": 0.93,
+        "debugging": 0.92,
+        "testing": 0.9,
+        "research": 0.92,
+        "writing": 0.94,
+        "planning": 0.94,
+        "review": 0.92,
+        "data_analysis": 0.9,
+        "conversation": 0.94
+      },
+      "known_benchmark_scores": {
+        "public_quantitative_scores": null
+      },
+      "best_for": [
+        "architecture",
+        "deep debugging",
+        "security review",
+        "complex planning",
+        "large-context synthesis",
+        "high-risk decisions",
+        "tool-heavy agents",
+        "long-running workflows"
+      ],
+      "avoid_for": [
+        "simple formatting",
+        "obvious one-step tasks",
+        "low-risk classification"
+      ],
+      "benchmark_notes": {
+        "note": "Official GPT-5.5 docs describe it as strong for complex production workflows, coding, tool-heavy agents, grounded assistants, long-context retrieval, and product-spec-to-plan workflows. Public numeric benchmark data was not found in the official docs during this pass, so task quality scores are bootstrap estimates."
+      }
+    }
+  },
+  "specialized_models": {
+    "codex_api": {
+      "gpt-5.3-codex": {
+        "description": "Specialized Codex API model listed on OpenAI pricing page.",
+        "api_pricing_usd_per_1m_tokens": {
+          "standard": {
+            "input": 1.75,
+            "cached_input": 0.175,
+            "output": 14.0
+          },
+          "priority": {
+            "input": 3.5,
+            "cached_input": 0.35,
+            "output": 28.0
+          }
+        },
+        "routing_note": "Do not map this to a general model class yet; add a dedicated coding-specialist route only after the router supports specialized model outputs."
+      }
+    },
+    "pro_api": {
+      "gpt-5.5-pro": {
+        "description": "Maximum-performance API model for the most complex tasks.",
+        "api_pricing_usd_per_1m_tokens": {
+          "standard": {
+            "short_context": {
+              "input": 30.0,
+              "cached_input": null,
+              "output": 180.0
+            },
+            "long_context": {
+              "input": 60.0,
+              "cached_input": null,
+              "output": 270.0
+            }
+          }
+        },
+        "routing_note": "Reserve for a future ultra_strong route class; not used by the current router."
+      },
+      "gpt-5.4-pro": {
+        "description": "Maximum-performance GPT-5.4 API model.",
+        "api_pricing_usd_per_1m_tokens": {
+          "standard": {
+            "short_context": {
+              "input": 30.0,
+              "cached_input": null,
+              "output": 180.0
+            },
+            "long_context": {
+              "input": 60.0,
+              "cached_input": null,
+              "output": 270.0
+            }
+          }
+        },
+        "routing_note": "Not used by the current router."
+      }
+    }
+  },
+  "role_defaults": {
+    "classifier": "small_fast",
+    "router": "small_fast",
+    "default_worker": "standard",
+    "debugger": "strong",
+    "planner": "strong",
+    "reviewer": "strong",
+    "synthesizer": "standard"
+  },
+  "source_references": [
+    {
+      "id": "openai_api_pricing_2026_06_26",
+      "url": "https://developers.openai.com/api/docs/pricing",
+      "used_for": [
+        "gpt-5.5 pricing",
+        "gpt-5.4 pricing",
+        "gpt-5.4-mini pricing",
+        "gpt-5.3-codex pricing"
+      ]
+    },
+    {
+      "id": "openai_gpt_5_5_guide_2026_06_26",
+      "url": "https://developers.openai.com/api/docs/guides/latest-model",
+      "used_for": [
+        "GPT-5.5 qualitative performance guidance",
+        "reasoning effort guidance",
+        "routing notes for complex workflows"
+      ]
+    },
+    {
+      "id": "openai_gpt_5_4_release_2026_03_05",
+      "url": "https://openai.com/index/introducing-gpt-5-4/",
+      "used_for": [
+        "GPT-5.4 benchmark scores",
+        "context and agentic workflow notes"
+      ]
+    },
+        {
+            "id": "current_codex_app_tool_metadata_2026_06_26",
+            "url": "current-session-tool-metadata",
+            "used_for": [
+                "Codex app selectable model ids and descriptions"
+            ]
+        },
+        {
+            "id": "claude_model_overview_2026_06_26",
+            "url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+            "used_for": [
+                "Claude equivalent routing tiers",
+                "Claude context windows",
+                "Claude model ids"
+            ]
+        },
+        {
+            "id": "claude_pricing_2026_06_26",
+            "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+            "used_for": [
+                "Claude Haiku pricing",
+                "Claude Sonnet pricing",
+                "Claude Opus pricing",
+                "Claude cache-hit pricing"
+            ]
+        }
+    ]
+}

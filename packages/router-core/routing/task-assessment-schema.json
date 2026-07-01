@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/task-assessment.schema.json",
+  "title": "TaskAssessment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_type",
+    "complexity",
+    "risk",
+    "context_size",
+    "tool_need",
+    "parallelizable",
+    "requires_subagents",
+    "confidence",
+    "reasoning"
+  ],
+  "properties": {
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "coding",
+        "debugging",
+        "testing",
+        "research",
+        "writing",
+        "planning",
+        "review",
+        "data_analysis",
+        "conversation",
+        "unknown"
+      ]
+    },
+    "complexity": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "risk": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "context_size": {
+      "type": "string",
+      "enum": ["small", "medium", "large"]
+    },
+    "tool_need": {
+      "type": "string",
+      "enum": ["none", "light", "heavy"]
+    },
+    "parallelizable": {
+      "type": "boolean"
+    },
+    "requires_subagents": {
+      "type": "boolean"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "reasoning": {
+      "type": "string",
+      "minLength": 1
+    },
+    "suggested_subtasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "objective", "independent"],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "objective": {
+            "type": "string"
+          },
+          "independent": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}
