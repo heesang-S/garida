@@ -140,6 +140,8 @@ codex exec --model <route.model_id>
 
 - [x] Create `packages/executor-devin` as an unsupported stub until usable Devin APIs exist.
 
+- [x] Create `packages/executor-claude-code` as an unsupported stub until usable Claude Code APIs exist.
+
 - [x] Keep credentials out of router packages.
 
 ## Other Platform Plugin Leftovers

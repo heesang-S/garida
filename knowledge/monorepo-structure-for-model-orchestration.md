@@ -24,6 +24,7 @@ model-orchestration/
 │   ├── executor-anthropic/
 │   ├── executor-codex/
 │   ├── executor-devin/
+│   ├── executor-claude-code/
 │   └── executor-mock/
 ├── plugins/
 │   ├── codex-router/
@@ -306,6 +307,7 @@ executor-codex
 executor-openai
 executor-anthropic
 executor-devin
+executor-claude-code
 plugins/codex-router
 docs
 examples
@@ -328,4 +330,5 @@ PreparedAgentExecution
 Good follow-up work:
 
 - replace the Devin unsupported stub with a real executor only if Devin exposes usable runtime/model-selection APIs
+- replace the Claude Code unsupported stub with a real executor only if Claude Code exposes usable runtime/model-selection APIs
 - keep platform model-switching limitations documented in plugin and executor docs

@@ -39,6 +39,7 @@ The first routing policy artifacts live in `packages/router-core/routing/`:
 - `packages/executor-openai`: OpenAI Responses API executor.
 - `packages/executor-anthropic`: Anthropic Messages API executor.
 - `packages/executor-devin`: unsupported Devin executor stub for planning until usable APIs exist.
+- `packages/executor-claude-code`: unsupported Claude Code executor stub for planning until usable runtime hooks exist.
 
 ## Library Usage
 
@@ -183,6 +184,7 @@ Current executor packages:
 - `@model-orchestration/executor-openai`: calls OpenAI-compatible Responses API with `route.model_id`.
 - `@model-orchestration/executor-anthropic`: calls Anthropic Messages API with `route.model_id`.
 - `@model-orchestration/executor-devin`: deterministic unsupported stub that documents missing Devin runtime/model-selection APIs.
+- `@model-orchestration/executor-claude-code`: deterministic unsupported stub that documents missing Claude Code runtime/model-selection APIs.
 
 Example shape:
 
