@@ -1,6 +1,7 @@
 import { request as httpsRequest } from "node:https"
 import { z } from "zod"
-import type { AgentExecutor, ExecutorRunContext, ReviewResult, WorkerResult } from "@model-orchestration/executor-core"
+import { estimateTokenCost } from "@model-orchestration/executor-core"
+import type { AgentExecutor, ExecutorRunContext, ReviewResult, TokenUsage, WorkerResult } from "@model-orchestration/executor-core"
 import type { WorkerBrief } from "@model-orchestration/shared-types"
 
 export type ProviderRequest = {
@@ -44,6 +45,21 @@ const OpenAIResponseSchema = z
   })
   .passthrough()
 
+const OpenAIUsageSchema = z
+  .object({
+    usage: z.object({
+      input_tokens: z.number().int().nonnegative(),
+      input_tokens_details: z
+        .object({
+          cached_tokens: z.number().int().nonnegative().optional()
+        })
+        .optional(),
+      output_tokens: z.number().int().nonnegative(),
+      total_tokens: z.number().int().nonnegative().optional()
+    })
+  })
+  .passthrough()
+
 const ProviderErrorSchema = z
   .object({
     error: z
@@ -59,7 +75,7 @@ export function createOpenAIExecutor(options: OpenAIExecutorOptions = {}): Agent
     provider: "openai",
     async executeWorker(brief: WorkerBrief, context: ExecutorRunContext): Promise<WorkerResult> {
       const response = await sendOpenAIRequest(brief, context, options)
-      return responseToWorkerResult(brief, response)
+      return responseToWorkerResult(brief, response, context)
     },
     async executeReview(brief: WorkerBrief, context: ExecutorRunContext): Promise<ReviewResult> {
       const response = await sendOpenAIRequest(brief, context, options)
@@ -118,13 +134,23 @@ function buildOpenAIRequest(
   }
 }
 
-function responseToWorkerResult(brief: WorkerBrief, response: ProviderResponse): WorkerResult {
+function responseToWorkerResult(brief: WorkerBrief, response: ProviderResponse, context: ExecutorRunContext): WorkerResult {
   if (response.status >= 200 && response.status < 300) {
-    return {
+    const usage = extractUsage(response.body)
+    const result: WorkerResult = {
       worker_id: brief.id,
       status: "succeeded",
       output: extractOutput(response.body),
       evidence: ["openai-executor-api"]
+    }
+    if (usage === undefined) {
+      return result
+    }
+
+    return {
+      ...result,
+      usage,
+      cost: estimateTokenCost(usage, context.route.pricing_usd_per_1m_tokens)
     }
   }
 
@@ -135,6 +161,25 @@ function responseToWorkerResult(brief: WorkerBrief, response: ProviderResponse):
     output: error,
     evidence: ["openai-executor-api"],
     error
+  }
+}
+
+function extractUsage(body: unknown): TokenUsage | undefined {
+  const parsed = OpenAIUsageSchema.safeParse(body)
+  if (!parsed.success) {
+    return undefined
+  }
+
+  const cachedInputTokens = parsed.data.usage.input_tokens_details?.cached_tokens ?? 0
+  const totalTokens =
+    parsed.data.usage.total_tokens ??
+    parsed.data.usage.input_tokens + cachedInputTokens + parsed.data.usage.output_tokens
+
+  return {
+    input_tokens: parsed.data.usage.input_tokens,
+    cached_input_tokens: cachedInputTokens,
+    output_tokens: parsed.data.usage.output_tokens,
+    total_tokens: totalTokens
   }
 }
 

@@ -1,4 +1,5 @@
 import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
+import type { TokenCost, TokenUsage } from "./cost.js"
 import { ExecutorTimeoutError, MissingReviewExecutorError } from "./errors.js"
 import { appendCompletedExecutionLog, systemExecutionClock } from "./execution-log.js"
 import type { ExecutionClock, ExecutionLogStore } from "./execution-log.js"
@@ -55,6 +56,8 @@ export type WorkerResult = {
   readonly status: WorkerResultStatus
   readonly output: string
   readonly evidence: readonly string[]
+  readonly usage?: TokenUsage
+  readonly cost?: TokenCost
   readonly error?: string
 }
 
@@ -63,6 +66,8 @@ export type ReviewResult = {
   readonly status: ReviewResultStatus
   readonly output: string
   readonly findings: readonly string[]
+  readonly usage?: TokenUsage
+  readonly cost?: TokenCost
 }
 
 export type AgentExecutor = {

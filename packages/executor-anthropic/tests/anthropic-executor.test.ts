@@ -51,7 +51,12 @@ describe("createAnthropicExecutor", () => {
                 type: "text",
                 text: "anthropic worker output"
               }
-            ]
+            ],
+            usage: {
+              input_tokens: 1_000,
+              cache_read_input_tokens: 2_000,
+              output_tokens: 500
+            }
           }
         }
       }
@@ -65,6 +70,18 @@ describe("createAnthropicExecutor", () => {
 
     expect(result.status).toBe("succeeded")
     expect(result.output).toBe("anthropic worker output")
+    expect(result.usage).toEqual({
+      input_tokens: 1_000,
+      cached_input_tokens: 2_000,
+      output_tokens: 500,
+      total_tokens: 3_500
+    })
+    expect(result.cost).toEqual({
+      input_usd: 0.005,
+      cached_input_usd: 0.001,
+      output_usd: 0.0125,
+      total_usd: 0.0185
+    })
     expect(requests[0]?.url).toBe("https://api.anthropic.com/v1/messages")
     expect(requests[0]?.headers["x-api-key"]).toBe("test-key")
     expect(JSON.parse(requests[0]?.body ?? "{}")).toMatchObject({

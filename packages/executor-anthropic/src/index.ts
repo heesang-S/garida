@@ -1,6 +1,7 @@
 import { request as httpsRequest } from "node:https"
 import { z } from "zod"
-import type { AgentExecutor, ExecutorRunContext, ReviewResult, WorkerResult } from "@model-orchestration/executor-core"
+import { estimateTokenCost } from "@model-orchestration/executor-core"
+import type { AgentExecutor, ExecutorRunContext, ReviewResult, TokenUsage, WorkerResult } from "@model-orchestration/executor-core"
 import type { WorkerBrief } from "@model-orchestration/shared-types"
 
 export type ProviderRequest = {
@@ -38,6 +39,16 @@ const AnthropicResponseSchema = z
   })
   .passthrough()
 
+const AnthropicUsageSchema = z
+  .object({
+    usage: z.object({
+      input_tokens: z.number().int().nonnegative(),
+      cache_read_input_tokens: z.number().int().nonnegative().optional(),
+      output_tokens: z.number().int().nonnegative()
+    })
+  })
+  .passthrough()
+
 const ProviderErrorSchema = z
   .object({
     error: z
@@ -53,7 +64,7 @@ export function createAnthropicExecutor(options: AnthropicExecutorOptions = {}):
     provider: "anthropic",
     async executeWorker(brief: WorkerBrief, context: ExecutorRunContext): Promise<WorkerResult> {
       const response = await sendAnthropicRequest(brief, context, options)
-      return responseToWorkerResult(brief, response)
+      return responseToWorkerResult(brief, response, context)
     },
     async executeReview(brief: WorkerBrief, context: ExecutorRunContext): Promise<ReviewResult> {
       const response = await sendAnthropicRequest(brief, context, options)
@@ -119,13 +130,23 @@ function buildAnthropicRequest(
   }
 }
 
-function responseToWorkerResult(brief: WorkerBrief, response: ProviderResponse): WorkerResult {
+function responseToWorkerResult(brief: WorkerBrief, response: ProviderResponse, context: ExecutorRunContext): WorkerResult {
   if (response.status >= 200 && response.status < 300) {
-    return {
+    const usage = extractUsage(response.body)
+    const result: WorkerResult = {
       worker_id: brief.id,
       status: "succeeded",
       output: extractOutput(response.body),
       evidence: ["anthropic-executor-api"]
+    }
+    if (usage === undefined) {
+      return result
+    }
+
+    return {
+      ...result,
+      usage,
+      cost: estimateTokenCost(usage, context.route.pricing_usd_per_1m_tokens)
     }
   }
 
@@ -136,6 +157,22 @@ function responseToWorkerResult(brief: WorkerBrief, response: ProviderResponse):
     output: error,
     evidence: ["anthropic-executor-api"],
     error
+  }
+}
+
+function extractUsage(body: unknown): TokenUsage | undefined {
+  const parsed = AnthropicUsageSchema.safeParse(body)
+  if (!parsed.success) {
+    return undefined
+  }
+
+  const cachedInputTokens = parsed.data.usage.cache_read_input_tokens ?? 0
+
+  return {
+    input_tokens: parsed.data.usage.input_tokens,
+    cached_input_tokens: cachedInputTokens,
+    output_tokens: parsed.data.usage.output_tokens,
+    total_tokens: parsed.data.usage.input_tokens + cachedInputTokens + parsed.data.usage.output_tokens
   }
 }
 

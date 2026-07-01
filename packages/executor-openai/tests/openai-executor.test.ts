@@ -46,7 +46,15 @@ describe("createOpenAIExecutor", () => {
         return {
           status: 200,
           body: {
-            output_text: "openai worker output"
+            output_text: "openai worker output",
+            usage: {
+              input_tokens: 1_000,
+              input_tokens_details: {
+                cached_tokens: 2_000
+              },
+              output_tokens: 500,
+              total_tokens: 3_500
+            }
           }
         }
       }
@@ -60,6 +68,18 @@ describe("createOpenAIExecutor", () => {
 
     expect(result.status).toBe("succeeded")
     expect(result.output).toBe("openai worker output")
+    expect(result.usage).toEqual({
+      input_tokens: 1_000,
+      cached_input_tokens: 2_000,
+      output_tokens: 500,
+      total_tokens: 3_500
+    })
+    expect(result.cost).toEqual({
+      input_usd: 0.003,
+      cached_input_usd: 0.0006,
+      output_usd: 0.0075,
+      total_usd: 0.0111
+    })
     expect(requests[0]?.url).toBe("https://api.openai.com/v1/responses")
     expect(requests[0]?.headers["authorization"]).toBe("Bearer test-key")
     expect(JSON.parse(requests[0]?.body ?? "{}")).toMatchObject({
