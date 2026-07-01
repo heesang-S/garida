@@ -1,5 +1,9 @@
 # Executor Adapters Todo
 
+See `knowledge/platform-capability-matrix.md` for the current platform-level
+support matrix covering exact model switching, MCP usage, executor handoff, and
+worker result return paths.
+
 The router currently decides which model/provider should handle a task and produces an execution plan. It does not execute model calls by itself.
 
 Executor adapters consume `route.model_id` and run or plan the selected runtime/provider.
@@ -39,6 +43,9 @@ By default it does not spawn a process. Set `mode: "execute"` to use a process r
 
 - Claude plugin adapter scaffold lives in `plugins/claude-router`, depending on
   available Claude Code runtime hooks for exact model selection and delegated
+  execution.
+- Devin plugin adapter scaffold lives in `plugins/devin-router`, depending on
+  available Devin runtime hooks for exact model selection and delegated
   execution.
 
 ## Planned Cross-Cutting Contracts

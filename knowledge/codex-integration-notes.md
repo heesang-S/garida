@@ -1,5 +1,9 @@
 # Codex Integration Notes
 
+See `knowledge/platform-capability-matrix.md` for the cross-platform capability
+summary and current support boundaries across Codex, Claude Code, Devin, and
+personal agents.
+
 The router can decide which model should be used, but Codex must expose a way for the integration layer to request that model for the next worker call.
 
 The expected flow is:

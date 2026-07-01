@@ -154,7 +154,7 @@ codex exec --model <route.model_id>
 
 - [x] Create personal-agent integration plan and implementation scaffold.
 
-- [ ] For each platform, document:
+- [x] Add `knowledge/platform-capability-matrix.md` covering:
   - whether exact model switching is supported
   - whether MCP tools are supported
   - whether external executors can be called
