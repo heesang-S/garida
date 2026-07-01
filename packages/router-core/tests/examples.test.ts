@@ -1,4 +1,4 @@
-import { readdir } from "node:fs/promises"
+import { readdir, readFile } from "node:fs/promises"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
@@ -7,6 +7,7 @@ import { routeTask } from "../src/router.js"
 import { validateTaskAssessment } from "../src/validate-assessment.js"
 
 const tasksDirectory = join(process.cwd(), "..", "..", "examples", "tasks")
+const snapshotsPath = join(process.cwd(), "tests", "fixtures", "route-decisions.json")
 
 describe("example task fixtures", () => {
   it("validates and routes every valid example", async () => {
@@ -21,6 +22,21 @@ describe("example task fixtures", () => {
       expect(decision.model_class).toMatch(/^(small_fast|standard|strong)$/)
       expect(decision.matched_rules.length).toBeGreaterThan(0)
     }
+  })
+
+  it("matches route-decision fixture snapshots for every valid example", async () => {
+    const snapshots: unknown = JSON.parse(await readFile(snapshotsPath, "utf8"))
+    const files = await readdir(tasksDirectory)
+    const validFiles = files.filter((fileName) => !fileName.startsWith("invalid-")).sort()
+    const decisions: Record<string, unknown> = {}
+
+    for (const fileName of validFiles) {
+      const value = await loadJsonFile(join(tasksDirectory, fileName))
+      const assessment = await validateTaskAssessment(value)
+      decisions[fileName] = await routeTask(assessment)
+    }
+
+    expect(decisions).toEqual(snapshots)
   })
 
   it("rejects the invalid extra-field fixture", async () => {

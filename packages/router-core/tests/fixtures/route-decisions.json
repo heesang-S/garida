@@ -1,0 +1,116 @@
+{
+  "coding-medium.json": {
+    "model_class": "standard",
+    "provider": "openai_codex",
+    "model_id": "gpt-5.4",
+    "pricing_usd_per_1m_tokens": {
+      "input": 2.5,
+      "cached_input": 0.25,
+      "output": 15
+    },
+    "delegate": false,
+    "add_reviewer": false,
+    "matched_rules": [
+      "default_uses_standard",
+      "non_parallel_work_does_not_delegate",
+      "default_no_reviewer"
+    ],
+    "routing_reason": "Default useful-work route when no stronger or cheaper rule applies. Tightly coupled work should stay with one agent or a deterministic workflow. Default to no reviewer for low-risk direct work.",
+    "fallback": "Escalate to strong if verification fails, requirements conflict, or task risk increases."
+  },
+  "complex-planning-delegated.json": {
+    "model_class": "strong",
+    "provider": "openai_codex",
+    "model_id": "gpt-5.5",
+    "pricing_usd_per_1m_tokens": {
+      "input": 5,
+      "cached_input": 0.5,
+      "output": 30
+    },
+    "delegate": true,
+    "add_reviewer": true,
+    "matched_rules": [
+      "high_complexity_planning_uses_strong",
+      "complex_parallel_work_delegates",
+      "delegated_work_adds_reviewer"
+    ],
+    "routing_reason": "High-complexity planning usually requires architecture-level judgment. High-complexity parallel work can benefit from specialized sub-agents. Delegated work needs synthesis and review.",
+    "fallback": "Escalate to strong if verification fails, requirements conflict, or task risk increases."
+  },
+  "debugging-medium.json": {
+    "model_class": "strong",
+    "provider": "openai_codex",
+    "model_id": "gpt-5.5",
+    "pricing_usd_per_1m_tokens": {
+      "input": 5,
+      "cached_input": 0.5,
+      "output": 30
+    },
+    "delegate": false,
+    "add_reviewer": false,
+    "matched_rules": [
+      "deep_debugging_uses_strong",
+      "non_parallel_work_does_not_delegate",
+      "default_no_reviewer"
+    ],
+    "routing_reason": "Medium or high complexity debugging needs deeper reasoning and careful verification. Tightly coupled work should stay with one agent or a deterministic workflow. Default to no reviewer for low-risk direct work.",
+    "fallback": "Escalate to strong if verification fails, requirements conflict, or task risk increases."
+  },
+  "high-risk-review.json": {
+    "model_class": "strong",
+    "provider": "openai_codex",
+    "model_id": "gpt-5.5",
+    "pricing_usd_per_1m_tokens": {
+      "input": 5,
+      "cached_input": 0.5,
+      "output": 30
+    },
+    "delegate": false,
+    "add_reviewer": true,
+    "matched_rules": [
+      "high_risk_uses_strong",
+      "non_parallel_work_does_not_delegate",
+      "high_risk_adds_reviewer"
+    ],
+    "routing_reason": "High-risk tasks require the strongest model class. Tightly coupled work should stay with one agent or a deterministic workflow. High-risk tasks need independent verification.",
+    "fallback": "Escalate to strong if verification fails, requirements conflict, or task risk increases."
+  },
+  "simple-writing.json": {
+    "model_class": "small_fast",
+    "provider": "openai_codex",
+    "model_id": "gpt-5.4-mini",
+    "pricing_usd_per_1m_tokens": {
+      "input": 0.75,
+      "cached_input": 0.075,
+      "output": 4.5
+    },
+    "delegate": false,
+    "add_reviewer": false,
+    "matched_rules": [
+      "simple_low_risk_uses_small_fast",
+      "low_complexity_does_not_delegate",
+      "default_no_reviewer"
+    ],
+    "routing_reason": "Simple, low-risk, low-tool tasks should use the cheapest capable model class. Simple tasks usually cost more to coordinate than to solve directly. Default to no reviewer for low-risk direct work.",
+    "fallback": "Escalate to strong if verification fails, requirements conflict, or task risk increases."
+  },
+  "testing-medium.json": {
+    "model_class": "standard",
+    "provider": "openai_codex",
+    "model_id": "gpt-5.4",
+    "pricing_usd_per_1m_tokens": {
+      "input": 2.5,
+      "cached_input": 0.25,
+      "output": 15
+    },
+    "delegate": false,
+    "add_reviewer": false,
+    "matched_rules": [
+      "default_uses_standard",
+      "non_parallel_work_does_not_delegate",
+      "default_no_reviewer"
+    ],
+    "routing_reason": "Default useful-work route when no stronger or cheaper rule applies. Tightly coupled work should stay with one agent or a deterministic workflow. Default to no reviewer for low-risk direct work.",
+    "fallback": "Escalate to strong if verification fails, requirements conflict, or task risk increases."
+  }
+}

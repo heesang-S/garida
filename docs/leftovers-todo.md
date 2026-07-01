@@ -37,8 +37,8 @@ Current next priority:
 
 ```text
 1. Other platform integrations
-2. Route-decision fixture snapshots
-3. Eval dashboards/reporting over persisted logs
+2. Eval dashboards/reporting over persisted logs
+3. Additional platform plugins
 ```
 
 ## Router Package Leftovers
@@ -59,7 +59,7 @@ Current next priority:
   - no API keys in router core
   - no process spawning in router core
 
-- [ ] Add route-decision fixture snapshots after package split.
+- [x] Add route-decision fixture snapshots after package split.
 
 - [ ] Add project-specific eval logging later:
   - task type
