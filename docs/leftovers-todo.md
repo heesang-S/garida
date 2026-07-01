@@ -148,7 +148,7 @@ codex exec --model <route.model_id>
 
 ## Other Platform Plugin Leftovers
 
-- [ ] Plan Claude/Claude Code plugin or integration.
+- [x] Create Claude/Claude Code integration scaffold.
 
 - [ ] Plan Devin plugin or integration.
 

@@ -37,7 +37,9 @@ By default it does not spawn a process. Set `mode: "execute"` to use a process r
 
 ## Planned Adapters
 
-- Claude plugin adapter, depending on available runtime hooks.
+- Claude plugin adapter scaffold lives in `plugins/claude-router`, depending on
+  available Claude Code runtime hooks for exact model selection and delegated
+  execution.
 
 ## Planned Cross-Cutting Contracts
 

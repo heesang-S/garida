@@ -241,6 +241,8 @@ importers:
 
   packages/shared-types: {}
 
+  plugins/claude-router: {}
+
   plugins/codex-router: {}
 
   plugins/personal-agent-router: {}
