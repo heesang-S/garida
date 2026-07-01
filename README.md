@@ -170,6 +170,10 @@ Codex
 
 If model switching is not available in the current Codex surface, the router still returns the intended model and cost so the agent can decide whether to continue, warn, or use an external API adapter.
 
+The Codex plugin scaffold lives at `plugins/codex-router`. It provides the
+thin plugin packaging, the `routed-task` skill, and local MCP registration
+notes for Codex-specific setup.
+
 More detail lives in `knowledge/codex-integration-notes.md`.
 
 ## Executor Packages

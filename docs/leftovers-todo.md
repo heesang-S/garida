@@ -190,11 +190,11 @@ Yes, but keep them separate from router-core.
 
 Before considering the next phase complete:
 
-- [ ] `pnpm run typecheck` passes.
-- [ ] `pnpm test` passes.
-- [ ] `pnpm build` passes.
-- [ ] CLI route smoke test passes.
-- [ ] MCP client smoke test lists `route_task` and `prepare_execution`.
-- [ ] HTTP `/route` and `/plan` tests pass.
-- [ ] README explains how to use library, MCP, HTTP, and Codex plugin path.
-- [ ] Knowledge docs explain router/executor/plugin boundaries.
+- [x] `pnpm run typecheck` passes.
+- [x] `pnpm test` passes.
+- [x] `pnpm build` passes.
+- [x] CLI route smoke test passes.
+- [x] MCP client smoke test lists `route_task` and `prepare_execution`.
+- [x] HTTP `/route` and `/plan` tests pass.
+- [x] README explains how to use library, MCP, HTTP, and Codex plugin path.
+- [x] Knowledge docs explain router/executor/plugin boundaries.
