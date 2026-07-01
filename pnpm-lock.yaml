@@ -245,6 +245,8 @@ importers:
 
   plugins/codex-router: {}
 
+  plugins/devin-router: {}
+
   plugins/personal-agent-router: {}
 
 packages:

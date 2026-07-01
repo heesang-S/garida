@@ -150,7 +150,7 @@ codex exec --model <route.model_id>
 
 - [x] Create Claude/Claude Code integration scaffold.
 
-- [ ] Plan Devin plugin or integration.
+- [x] Create Devin integration scaffold.
 
 - [x] Create personal-agent integration plan and implementation scaffold.
 

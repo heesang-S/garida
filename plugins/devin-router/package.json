@@ -1,0 +1,11 @@
+{
+  "name": "@model-orchestration/devin-router-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node -e \"console.log('devin-router plugin has no build step')\"",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  }
+}
