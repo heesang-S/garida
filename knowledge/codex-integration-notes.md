@@ -13,7 +13,7 @@ Codex agent receives task
 -> classify task into task assessment JSON
 -> call MCP tool `prepare_execution`
 -> read `route.model_id`
--> create worker/sub-agent with that model when supported
+-> start separate Codex worker execution with that model when supported
 -> run reviewer if `route.add_reviewer` is true
 -> synthesize according to `execution_plan.synthesis_strategy`
 ```
@@ -24,6 +24,7 @@ If Codex does not expose model switching for sub-agents, the router still helps 
 - deciding whether delegation is worth it
 - producing worker and reviewer briefs
 - estimating cost for external API execution
+- enabling a separate routed worker path through `packages/executor-codex`
 
 ## Current MCP Tools
 
@@ -57,6 +58,20 @@ task assessment
 
 Actual model switching depends on the Codex runtime, plugin, or API layer that consumes the recommendation.
 
+## Separate Routed Worker Path
+
+The current chat can stay on its existing model while routed work runs in
+separate Codex processes. The execution path is:
+
+```text
+current Codex chat
+-> MCP prepare_execution
+-> route + execution_plan
+-> packages/executor-codex
+-> codex exec --model <route.model_id> <worker brief>
+-> structured worker/reviewer results
+```
+
 ## Codex Router Plugin
 
 The repo includes a Codex plugin at `plugins/codex-router`. It packages:
@@ -67,14 +82,17 @@ The repo includes a Codex plugin at `plugins/codex-router`. It packages:
 
 The plugin is intentionally thin. It calls the router MCP server and does not duplicate routing rules.
 
-## Future Executor
+## Codex Executor
 
-The plugin currently routes and plans. It does not execute routed workers itself.
-
-A future executor can use the selected route with a command shaped like:
+The plugin currently routes and plans. Separate worker execution lives in
+`packages/executor-codex`, which can use the selected route with a command shaped like:
 
 ```text
 codex exec --model <route.model_id> <worker brief>
 ```
 
-That executor should live in the executor package/domain, not inside router core.
+Run the dry-run example after `pnpm build`:
+
+```text
+node examples/codex-routed-execution.mjs
+```

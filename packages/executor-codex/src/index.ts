@@ -29,6 +29,9 @@ export type CodexExecutorOptions = {
   readonly process_runner?: CodexProcessRunner
 }
 
+export type { RunRoutedCodexExecutionInput } from "./routed-codex-runner.js"
+export { runRoutedCodexExecution } from "./routed-codex-runner.js"
+
 export function createCodexExecutor(options: CodexExecutorOptions = {}): AgentExecutor {
   return {
     provider: "codex",

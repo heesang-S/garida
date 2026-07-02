@@ -174,6 +174,21 @@ The Codex plugin scaffold lives at `plugins/codex-router`. It provides the
 thin plugin packaging, the `routed-task` skill, and local MCP registration
 notes for Codex-specific setup.
 
+For routed worker execution, keep the current chat on its existing model and
+run separate Codex workers through `packages/executor-codex`. That path uses:
+
+```text
+prepare_execution
+-> route + execution_plan
+-> codex exec --model <route.model_id> <worker brief>
+```
+
+Dry-run the routed-worker path after `pnpm build`:
+
+```text
+node examples/codex-routed-execution.mjs
+```
+
 More detail lives in `knowledge/codex-integration-notes.md`.
 
 ## Executor Packages

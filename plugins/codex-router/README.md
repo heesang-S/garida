@@ -30,12 +30,21 @@ The plugin also includes `.mcp.json`, which declares the same server for Codex p
 
 Use the `routed-task` skill before complex, high-risk, or potentially delegatable work. The skill calls `prepare_execution`, reads the route, and follows the returned execution plan.
 
-## Future Executor
+## Separate Routed Workers
 
-The plugin currently routes and plans. A future executor can run:
+This plugin does not switch the already-running Codex chat model. Instead, a
+caller can hand the returned `route` and `execution_plan` to
+`packages/executor-codex`, which runs separate Codex workers with:
 
 ```bash
 codex exec --model <route.model_id> <worker brief>
 ```
 
-That executor should live in the executor package/domain, not inside router core.
+The plugin remains the routing surface. Process execution belongs in the
+executor package/domain, not inside router core or the plugin manifest layer.
+
+Dry-run the routed-worker flow after `pnpm build`:
+
+```bash
+node examples/codex-routed-execution.mjs
+```
