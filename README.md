@@ -122,8 +122,8 @@ The library does not execute LLM calls. It produces deterministic routing and ex
 
 Run the library usage example:
 
-```text
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm build
+```bash
+pnpm build
 node examples/agent-library-usage.mjs
 ```
 
@@ -131,8 +131,8 @@ node examples/agent-library-usage.mjs
 
 Run the MCP stdio server:
 
-```text
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm run mcp
+```bash
+pnpm run mcp
 ```
 
 It exposes:
@@ -144,8 +144,8 @@ prepare_execution
 
 Run the optional HTTP API:
 
-```text
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm run api
+```bash
+pnpm run api
 ```
 
 HTTP endpoints:
@@ -247,8 +247,8 @@ Set `mode: "execute"` to run the command through a process runner. API executor 
 
 Execution logs can be persisted with the JSONL execution log store and summarized from the command line:
 
-```text
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH pnpm run report -- path/to/execution-log.jsonl
+```bash
+pnpm run report -- path/to/execution-log.jsonl
 ```
 
 The report includes run counts, completed runs, failed worker results, total duration, token totals, total cost, and provider-level cost/failure summaries.

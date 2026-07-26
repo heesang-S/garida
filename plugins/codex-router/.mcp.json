@@ -1,9 +1,9 @@
 {
   "mcpServers": {
     "model_router": {
-      "command": "/Users/HeeSang/.nvm/versions/node/v24.16.0/bin/node",
+      "command": "node",
       "args": [
-        "/Users/HeeSang/Desktop/dev/ai/garida/packages/router-mcp/dist/src/mcp-server.js"
+        "packages/router-mcp/dist/src/mcp-server.js"
       ]
     }
   }

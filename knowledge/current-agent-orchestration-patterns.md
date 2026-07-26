@@ -404,8 +404,8 @@ if manager should own final answer:
 
 ## Local References Inspected
 
-- `/Users/HeeSang/.codex/plugins/cache/openai-curated/superpowers/202e9242/skills/subagent-driven-development/SKILL.md`
-- `/Users/HeeSang/.codex/plugins/cache/openai-curated/superpowers/202e9242/skills/dispatching-parallel-agents/SKILL.md`
-- `/Users/HeeSang/.codex/plugins/cache/sisyphuslabs/omo/0.1.0/skills/ulw-loop/references/full-workflow.md`
-- `/Users/HeeSang/.codex/plugins/cache/sisyphuslabs/omo/0.1.0/skills/review-work/SKILL.md`
-- `/Users/HeeSang/.codex/plugins/cache/sisyphuslabs/omo/0.1.0/model-catalog.json`
+- Superpowers: subagent-driven-development skill
+- Superpowers: dispatching-parallel-agents skill
+- OMO: full-workflow reference
+- OMO: review-work skill
+- OMO: model catalog

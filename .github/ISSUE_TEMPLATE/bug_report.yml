@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a reproducible problem in Garida.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. Do not include credentials, private prompts, or security vulnerabilities. See SECURITY.md for private vulnerability reporting.
+  - type: input
+    id: package
+    attributes:
+      label: Package and version
+      description: For example, the package name, commit, or unpublished local revision.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest steps, input, and command that demonstrate the problem.
+      placeholder: |
+        1. ...
+        2. ...
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include Node.js version, package manager version, operating system, and integration host if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs or error output
+      description: Remove API keys, tokens, private prompts, and personal paths before pasting.

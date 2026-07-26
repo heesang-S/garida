@@ -17,6 +17,5 @@ worker-brief planning.
 
 ## Further Notes
 
-See
-`/Users/HeeSang/Desktop/dev/ai/garida/knowledge/devin-integration-notes.md`
+See [the Devin integration notes](../../knowledge/devin-integration-notes.md)
 for the current platform blocker and the expected integration flow.

@@ -13,16 +13,16 @@ Manifest notes:
 Build the router:
 
 ```bash
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm build
+pnpm build
 ```
 
 Register the MCP server:
 
 ```bash
-/Applications/Codex.app/Contents/Resources/codex mcp add model_router -- /Users/HeeSang/.nvm/versions/node/v24.16.0/bin/node /Users/HeeSang/Desktop/dev/ai/garida/packages/router-mcp/dist/src/mcp-server.js
+codex mcp add model_router -- node packages/router-mcp/dist/src/mcp-server.js
 ```
 
-Restart Codex after registration.
+Run this command from the repository root, then restart Codex after registration.
 
 The plugin also includes `.mcp.json`, which declares the same server for Codex plugin loading.
 

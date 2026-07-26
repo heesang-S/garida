@@ -52,27 +52,27 @@ The executable base is implemented as a TypeScript CLI/library.
 
 Install dependencies:
 
-```text
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm install
+```bash
+pnpm install --frozen-lockfile
 ```
 
 Run verification:
 
-```text
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm run typecheck
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm test
+```bash
+pnpm typecheck
+pnpm test
 ```
 
 Run the router:
 
-```text
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm run route -- examples/tasks/simple-writing.json
+```bash
+pnpm run route -- examples/tasks/simple-writing.json
 ```
 
 Run the router with a Claude provider preference:
 
-```text
-PATH=/Users/HeeSang/.nvm/versions/node/v24.16.0/bin:$PATH CI=true pnpm run route -- --provider anthropic_claude examples/tasks/simple-writing.json
+```bash
+pnpm run route -- --provider anthropic_claude examples/tasks/simple-writing.json
 ```
 
 Pipeline:

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and support
+    url: https://github.com/heesang-S/garida/discussions
+    about: Ask usage and integration questions in GitHub Discussions.
+  - name: Report a security vulnerability
+    url: https://github.com/heesang-S/garida/security/advisories/new
+    about: Use GitHub Security Advisories for private vulnerability reports.

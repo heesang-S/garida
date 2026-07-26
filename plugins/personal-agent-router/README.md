@@ -24,5 +24,5 @@ return contract:
   chosen runtime or executor package.
 - `result.review_result` stores the reviewer output when the plan includes one.
 
-See `/Users/HeeSang/Desktop/dev/ai/garida/examples/personal-agent-execution.json`
-for a concrete example payload a personal agent can emit back to its caller.
+See [the example execution payload](../../examples/personal-agent-execution.json)
+for a concrete payload a personal agent can emit back to its caller.
