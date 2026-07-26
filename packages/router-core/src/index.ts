@@ -1,8 +1,30 @@
 export { prepareAgentExecution } from "./agent-runtime.js"
-export type { PreparedAgentExecution } from "./agent-runtime.js"
+export type { PreparedAgentExecution } from "./router.js"
 export { createExecutionPlan } from "./execution-plan.js"
 export { loadJsonFile } from "./load-json.js"
-export { routeTask, routeTaskForProvider, RoutingPolicyError } from "./router.js"
+export {
+  createRouter,
+  DEFAULT_MODEL_CATALOG,
+  DEFAULT_ROUTING_POLICY,
+  formatRouterConfigurationValidationErrors,
+  ModelCatalogValidationError,
+  resolveModelFromCatalog,
+  routeTask,
+  routeTaskForProvider,
+  RouterConfigurationValidationError,
+  RoutingPolicyError,
+  RoutingPolicyValidationError,
+  validateModelCatalog,
+  validateRoutingPolicy
+} from "./router.js"
+export type {
+  ModelCatalog,
+  ResolvedModel,
+  Router,
+  RouterConfig,
+  RouterConfigurationErrorCode,
+  RouterConfigurationValidationIssue
+} from "./router.js"
 export {
   TaskAssessmentValidationError,
   formatValidationErrors,
@@ -16,8 +38,13 @@ export type {
   ModelClass,
   ModelPricing,
   ModelProvider,
+  Risk,
+  RoutingPolicy,
   RouteDecision,
   RouteOptions,
+  Rule,
+  RuleCondition,
+  RoutePatch,
   SuggestedSubtask,
   TaskAssessment,
   TaskType,
