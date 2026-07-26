@@ -18,6 +18,23 @@ The agent should:
 
 The agent should be a practical coordinator: use the smallest capable model and the fewest necessary sub-agents while preserving quality, reliability, and clear ownership of each task.
 
+## Public Alpha Scope
+
+Garida is being prepared as a deterministic, explainable model-routing library:
+it turns structured task assessments into inspectable model routes and portable
+execution plans. The library is the foundation, MCP is the primary universal
+adapter, and the HTTP adapter is experimental. Provider executors and
+host-specific plugins are not public packages in the first alpha.
+
+The alpha supports ESM on Node `>=22.13`, with Node 22 and 24 verified before
+release; the workspace uses pinned `pnpm@11.5.1`. Package and executable names
+remain subject to registry availability. Garida is licensed under [MIT](./LICENSE)
+and does not claim universally optimal routing.
+
+Read the [product scope](./docs/product-scope.md) and
+[compatibility notes](./docs/compatibility.md) for supported integrations,
+limitations, and non-goals.
+
 ## Routing Policy Base
 
 The first routing policy artifacts live in `packages/router-core/routing/`:
