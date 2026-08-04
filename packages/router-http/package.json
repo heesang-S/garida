@@ -18,7 +18,7 @@
   "dependencies": {
     "@hono/node-server": "^2.0.6",
     "@model-orchestration/router-mcp": "workspace:*",
-    "hono": "^4.12.27",
+    "hono": "^4.12.34",
     "zod": "^4.4.3"
   },
   "devDependencies": {
