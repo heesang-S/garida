@@ -1,5 +1,5 @@
 import type { AgentExecutor, ExecutorRunContext, ReviewResult, WorkerResult } from "@model-orchestration/executor-core"
-import type { WorkerBrief } from "@model-orchestration/shared-types"
+import type { WorkerBrief } from "@garida/types"
 
 const UNSUPPORTED_MESSAGE =
   "Devin runtime/model selection API is not configured for this executor. Use this stub for planning only."

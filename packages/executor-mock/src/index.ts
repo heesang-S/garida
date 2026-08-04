@@ -6,7 +6,7 @@ import type {
   WorkerResult,
   WorkerResultStatus
 } from "@model-orchestration/executor-core"
-import type { WorkerBrief } from "@model-orchestration/shared-types"
+import type { WorkerBrief } from "@garida/types"
 
 export type MockExecutorOptions = {
   readonly worker_status?: WorkerResultStatus

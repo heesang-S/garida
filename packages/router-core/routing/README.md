@@ -85,4 +85,4 @@ LLM output JSON
 -> print route decision JSON
 ```
 
-The LLM still does not choose the exact model. It only classifies the task. The deterministic router chooses the capability tier, then resolves that tier to a concrete provider model such as `gpt-5.4`, `gpt-5.5`, `claude-sonnet-4-6`, or `claude-opus-4-8`.
+The LLM still does not choose the exact model. It only classifies the task. The deterministic router chooses the capability tier, then resolves that tier to a concrete provider model such as `gpt-5.6-luna`, `gpt-5.6-terra`, `gpt-5.6-sol`, `claude-sonnet-4-6`, or `claude-opus-4-8`.

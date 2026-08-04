@@ -1,23 +1,62 @@
 {
-  "name": "@model-orchestration/router-mcp",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@garida/mcp",
+  "version": "0.1.0-alpha.1",
+  "description": "Model Context Protocol adapter for Garida model routing.",
+  "license": "MIT",
   "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js"
+      "import": "./dist/src/index.js",
+      "default": "./dist/src/index.js"
     }
   },
+  "bin": {
+    "garida-mcp": "./dist/src/mcp-server.js"
+  },
+  "files": [
+    "dist/src/**/*.js",
+    "dist/src/**/*.d.ts",
+    "dist/src/**/*.js.map",
+    "dist/src/**/*.d.ts.map",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heesang-S/garida.git",
+    "directory": "packages/router-mcp"
+  },
+  "homepage": "https://github.com/heesang-S/garida#readme",
+  "bugs": {
+    "url": "https://github.com/heesang-S/garida/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "mcp",
+    "model-context-protocol",
+    "model-routing"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "mcp": "pnpm build && node dist/src/mcp-server.js",
+    "test:smoke": "pnpm build && vitest run tests/mcp-stdio-smoke.test.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@model-orchestration/router-core": "workspace:*",
-    "@model-orchestration/shared-types": "workspace:*",
+    "@garida/core": "0.1.0-alpha.1",
+    "@garida/types": "0.1.0-alpha.1",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^4.4.3"
   },

@@ -1,14 +1,25 @@
 {
-  "name": "model-orchestrating-agent",
+  "name": "garida-workspace",
   "version": "0.1.0",
   "private": true,
+  "description": "Garida deterministic model-routing workspace",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heesang-S/garida.git"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "type": "module",
   "scripts": {
-    "api": "pnpm --filter @model-orchestration/router-http api",
+    "api": "pnpm --filter @garida/http api",
     "build": "pnpm -r --filter './packages/*' --filter './plugins/*' build",
-    "mcp": "pnpm --filter @model-orchestration/router-mcp mcp",
+    "check:public-packages": "node scripts/check-public-packages.mjs",
+    "check:release": "node scripts/check-release-preflight.mjs",
+    "mcp": "pnpm --filter @garida/mcp mcp",
     "report": "pnpm --filter @model-orchestration/executor-core report",
-    "route": "pnpm --filter @model-orchestration/router-core build && node packages/router-core/dist/src/cli.js",
+    "route": "pnpm --filter @garida/core build && node packages/router-core/dist/src/cli.js",
     "test": "pnpm -r --filter './packages/*' --filter './plugins/*' test",
     "typecheck": "pnpm -r --filter './packages/*' --filter './plugins/*' typecheck"
   },

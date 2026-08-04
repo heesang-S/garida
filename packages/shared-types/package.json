@@ -1,16 +1,49 @@
 {
-  "name": "@model-orchestration/shared-types",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@garida/types",
+  "version": "0.1.0-alpha.1",
+  "description": "Shared type contracts for Garida model routing packages.",
+  "license": "MIT",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "dist/**/*.js.map",
+    "dist/**/*.d.ts.map",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heesang-S/garida.git",
+    "directory": "packages/shared-types"
+  },
+  "homepage": "https://github.com/heesang-S/garida#readme",
+  "bugs": {
+    "url": "https://github.com/heesang-S/garida/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "model-routing",
+    "types"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "test": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit"
   }

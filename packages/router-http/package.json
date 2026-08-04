@@ -1,23 +1,57 @@
 {
-  "name": "@model-orchestration/router-http",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@garida/http",
+  "version": "0.1.0-alpha.1",
+  "description": "HTTP adapter for Garida model routing.",
+  "license": "MIT",
   "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js"
+      "import": "./dist/src/index.js",
+      "default": "./dist/src/index.js"
     }
   },
+  "files": [
+    "README.md",
+    "dist/src/**/*.js",
+    "dist/src/**/*.d.ts",
+    "dist/src/**/*.js.map",
+    "dist/src/**/*.d.ts.map",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heesang-S/garida.git",
+    "directory": "packages/router-http"
+  },
+  "homepage": "https://github.com/heesang-S/garida#readme",
+  "bugs": {
+    "url": "https://github.com/heesang-S/garida/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "http",
+    "model-routing"
+  ],
   "scripts": {
     "api": "pnpm build && node dist/src/http-server.js",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.6",
-    "@model-orchestration/router-mcp": "workspace:*",
+    "@garida/core": "0.1.0-alpha.1",
     "hono": "^4.12.27",
     "zod": "^4.4.3"
   },

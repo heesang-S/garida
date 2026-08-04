@@ -5,7 +5,7 @@ import type {
   SuggestedSubtask,
   TaskAssessment,
   WorkerBrief
-} from "@model-orchestration/shared-types"
+} from "@garida/types"
 
 export function createExecutionPlan(
   assessment: TaskAssessment,

@@ -112,6 +112,12 @@ Objective: ensure internal execution work is safe and accurately represented.
 
 Acceptance criteria: timeout terminates subprocesses/requests; fatal failures do not retry; concurrency and redaction are tested; executor/plugin packages remain unpublished.
 
+### 6.5. Run a fast competitive evaluation gate
+
+Before starting the next integration phase, run the bounded protocol in
+[`quick-competitive-evaluation.md`](./quick-competitive-evaluation.md). This is
+a directional check, not a replacement for the full PR 8 evaluation.
+
 ### 7. Decouple and label the HTTP adapter experimental
 
 Objective: offer a local integration option without coupling it to MCP.

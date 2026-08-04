@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process"
+import { ExecutorOutputLimitError } from "@model-orchestration/executor-core"
 import type { AgentExecutor, ExecutorRunContext, ReviewResult, WorkerResult } from "@model-orchestration/executor-core"
-import type { RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
+import type { RouteDecision, WorkerBrief } from "@garida/types"
 
 export const CODEX_EXECUTOR_MODES = ["dry_run", "execute"] as const
 
@@ -25,8 +26,10 @@ export type CodexProcessRunner = (
 
 export type CodexExecutorOptions = {
   readonly codex_command?: string
+  readonly codex_args?: readonly string[]
   readonly mode?: CodexExecutorMode
   readonly process_runner?: CodexProcessRunner
+  readonly max_output_bytes?: number
 }
 
 export type { RunRoutedCodexExecutionInput } from "./routed-codex-runner.js"
@@ -35,6 +38,9 @@ export { runRoutedCodexExecution } from "./routed-codex-runner.js"
 export function createCodexExecutor(options: CodexExecutorOptions = {}): AgentExecutor {
   return {
     provider: "codex",
+    supports_route(route): boolean {
+      return route.provider === "openai_codex"
+    },
     async executeWorker(brief: WorkerBrief, context: ExecutorRunContext): Promise<WorkerResult> {
       const command = buildCodexExecCommand(brief, context.route, options)
       if (options.mode === "execute") {
@@ -71,8 +77,14 @@ async function runCodexCommand(
   context: ExecutorRunContext,
   options: CodexExecutorOptions
 ): Promise<CodexProcessResult> {
-  const runner = options.process_runner ?? spawnCodexProcess
-  return runner(command, context)
+  const maxOutputBytes = normalizeByteLimit(options.max_output_bytes)
+  const result = options.process_runner === undefined
+    ? await spawnCodexProcess(command, context, maxOutputBytes)
+    : await options.process_runner(command, context)
+  if (Buffer.byteLength(result.stdout) + Buffer.byteLength(result.stderr) > maxOutputBytes) {
+    throw new ExecutorOutputLimitError("codex-process", maxOutputBytes)
+  }
+  return result
 }
 
 function codexProcessToWorkerResult(
@@ -112,10 +124,12 @@ function codexProcessToReviewResult(
   }
 }
 
-async function spawnCodexProcess(
+export async function spawnCodexProcess(
   command: CodexExecCommand,
-  context: ExecutorRunContext
+  context: ExecutorRunContext,
+  maxOutputBytes = 1_048_576
 ): Promise<CodexProcessResult> {
+  const outputLimit = normalizeByteLimit(maxOutputBytes)
   return new Promise((resolve, reject) => {
     const child = spawn(command.command, command.args, {
       stdio: ["ignore", "pipe", "pipe"],
@@ -123,11 +137,36 @@ async function spawnCodexProcess(
     })
     const stdoutChunks: Buffer[] = []
     const stderrChunks: Buffer[] = []
+    let outputBytes = 0
+    let settled = false
 
-    child.stdout.on("data", (chunk: Buffer) => stdoutChunks.push(chunk))
-    child.stderr.on("data", (chunk: Buffer) => stderrChunks.push(chunk))
-    child.on("error", reject)
+    const rejectOnce = (error: Error): void => {
+      if (settled) return
+      settled = true
+      reject(error)
+    }
+
+    const appendChunk = (chunks: Buffer[], value: Buffer | string): void => {
+      if (settled) return
+      const chunk = Buffer.isBuffer(value) ? value : Buffer.from(value)
+      outputBytes += chunk.byteLength
+      if (outputBytes > outputLimit) {
+        const error = new ExecutorOutputLimitError("codex-process", outputLimit)
+        child.kill("SIGTERM")
+        child.stdout.destroy()
+        child.stderr.destroy()
+        rejectOnce(error)
+        return
+      }
+      chunks.push(chunk)
+    }
+
+    child.stdout.on("data", (chunk: Buffer | string) => appendChunk(stdoutChunks, chunk))
+    child.stderr.on("data", (chunk: Buffer | string) => appendChunk(stderrChunks, chunk))
+    child.on("error", rejectOnce)
     child.on("close", (code) => {
+      if (settled) return
+      settled = true
       resolve({
         exit_code: code ?? 1,
         stdout: Buffer.concat(stdoutChunks).toString("utf8"),
@@ -137,6 +176,10 @@ async function spawnCodexProcess(
   })
 }
 
+function normalizeByteLimit(value: number | undefined): number {
+  return value !== undefined && Number.isFinite(value) && value > 0 ? Math.floor(value) : 1_048_576
+}
+
 export function buildCodexExecCommand(
   brief: WorkerBrief,
   route: RouteDecision,
@@ -144,12 +187,14 @@ export function buildCodexExecCommand(
 ): CodexExecCommand {
   const command = options.codex_command ?? "codex"
   const prompt = buildWorkerPrompt(brief)
-  const args = ["exec", "--model", route.model_id, prompt]
+  const extraArgs = options.codex_args ?? []
+  const args = ["exec", "--model", route.model_id, ...extraArgs, prompt]
+  const displayArgs = ["exec", "--model", route.model_id, ...extraArgs, "<prompt>"]
 
   return {
     command,
     args,
-    display_command: [command, ...args].map(shellQuote).join(" ")
+    display_command: [command, ...displayArgs].map(shellQuote).join(" ")
   }
 }
 

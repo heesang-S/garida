@@ -1,0 +1,60 @@
+name: Release alpha packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish public alpha packages
+    runs-on: ubuntu-latest
+    environment: npm-release
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.0
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify public packages
+        run: |
+          pnpm run check:release -- --require-token
+          pnpm run check:public-packages
+          pnpm --filter @garida/types --filter @garida/core --filter @garida/mcp --filter @garida/http typecheck
+          pnpm --filter @garida/types --filter @garida/core --filter @garida/mcp --filter @garida/http test
+          pnpm --filter @garida/types --filter @garida/core --filter @garida/mcp --filter @garida/http build
+
+      - name: Verify npm authentication
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm whoami --registry=https://registry.npmjs.org
+
+      - name: Publish public packages in dependency order
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          for package_dir in packages/shared-types packages/router-core packages/router-mcp packages/router-http; do
+            package_name=$(node -p "require('./${package_dir}/package.json').name")
+            package_version=$(node -p "require('./${package_dir}/package.json').version")
+            if npm view "${package_name}@${package_version}" version >/dev/null 2>&1; then
+              echo "${package_name}@${package_version} already exists; skipping"
+            else
+              npm publish "./${package_dir}" --access public --provenance
+            fi
+          done

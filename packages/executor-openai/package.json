@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@model-orchestration/executor-core": "workspace:*",
-    "@model-orchestration/shared-types": "workspace:*",
+    "@garida/types": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

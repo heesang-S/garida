@@ -5,12 +5,12 @@ import {
   type CodexExecCommand
 } from "../src/index.js"
 import type { ExecutorRunContext } from "@model-orchestration/executor-core"
-import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
+import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@garida/types"
 
 const route: RouteDecision = {
   model_class: "strong",
   provider: "openai_codex",
-  model_id: "gpt-5.5",
+  model_id: "gpt-5.6-sol",
   pricing_usd_per_1m_tokens: {
     input: 3,
     cached_input: 0.3,
@@ -29,7 +29,7 @@ const workerBrief: WorkerBrief = {
   objective: "Create the next executor package.",
   model_class: "strong",
   provider: "openai_codex",
-  model_id: "gpt-5.5",
+  model_id: "gpt-5.6-sol",
   constraints: ["No provider API keys."],
   expected_output: "Working executor package.",
   acceptance_criteria: ["Command uses routed model."]
@@ -63,7 +63,7 @@ describe("runRoutedCodexExecution", () => {
 
     expect(result.worker_results).toHaveLength(1)
     expect(result.worker_results[0]?.status).toBe("succeeded")
-    expect(result.worker_results[0]?.output).toContain("codex exec --model gpt-5.5")
+    expect(result.worker_results[0]?.output).toContain("codex exec --model gpt-5.6-sol")
     expect(result.review_result).toBeUndefined()
     expect(result.synthesis_strategy).toBe("Return direct result.")
   })
@@ -76,7 +76,7 @@ describe("runRoutedCodexExecution", () => {
 
     expect(result.worker_results).toHaveLength(1)
     expect(result.review_result?.status).toBe("passed")
-    expect(result.review_result?.output).toContain("codex exec --model gpt-5.5")
+    expect(result.review_result?.output).toContain("codex exec --model gpt-5.6-sol")
   })
 
   it("uses the routed model in execute mode", async () => {
@@ -99,7 +99,7 @@ describe("runRoutedCodexExecution", () => {
     })
 
     expect(calls).toHaveLength(1)
-    expect(calls[0]).toContain("codex exec --model gpt-5.5")
+    expect(calls[0]).toContain("codex exec --model gpt-5.6-sol")
     expect(result.worker_results[0]?.output).toBe("worker result")
   })
 

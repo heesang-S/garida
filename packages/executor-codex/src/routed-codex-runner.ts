@@ -8,7 +8,7 @@ import {
   type RetryPolicy,
   type TimeoutPolicy
 } from "@model-orchestration/executor-core"
-import type { ExecutionPlan, RouteDecision } from "@model-orchestration/shared-types"
+import type { ExecutionPlan, RouteDecision } from "@garida/types"
 
 import {
   createCodexExecutor,
@@ -28,8 +28,10 @@ export type RunRoutedCodexExecutionInput = {
   readonly timeout_policy?: TimeoutPolicy
   readonly logger?: ExecutorLogger
   readonly codex_command?: string
+  readonly codex_args?: readonly string[]
   readonly mode?: CodexExecutorMode
   readonly process_runner?: CodexProcessRunner
+  readonly max_output_bytes?: number
 }
 
 export async function runRoutedCodexExecution(
@@ -39,10 +41,14 @@ export async function runRoutedCodexExecution(
     ...(input.codex_command === undefined
       ? {}
       : { codex_command: input.codex_command }),
+    ...(input.codex_args === undefined ? {} : { codex_args: input.codex_args }),
     ...(input.mode === undefined ? {} : { mode: input.mode }),
     ...(input.process_runner === undefined
       ? {}
-      : { process_runner: input.process_runner })
+      : { process_runner: input.process_runner }),
+    ...(input.max_output_bytes === undefined
+      ? {}
+      : { max_output_bytes: input.max_output_bytes })
   })
 
   return runExecutionPlan({

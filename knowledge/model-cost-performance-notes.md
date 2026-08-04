@@ -1,6 +1,6 @@
 # Model Cost and Performance Notes
 
-Research date: 2026-06-26
+Research date: 2026-07-17
 
 This note explains how `packages/router-core/routing/model-catalog.json` should be interpreted.
 
@@ -26,17 +26,22 @@ and allowed_risk includes task risk
 
 ## Current Model Mapping
 
-The current Codex app tools expose these model choices in this session:
+The catalog retains these legacy Codex model IDs for compatibility and history:
 
 - `gpt-5.4-mini`: small, fast, cost-efficient model.
 - `gpt-5.4`: strong everyday coding model.
 - `gpt-5.5`: frontier model for complex coding, research, and real-world work.
+The active GPT-5.6 choices are:
+
+- `gpt-5.6-luna`: fast, low-cost model for simple and low-risk work.
+- `gpt-5.6-terra`: balanced model for everyday coding and multi-step agent work.
+- `gpt-5.6-sol`: strong model for complex, high-risk, and tool-heavy work.
 
 The catalog maps them as:
 
-- `small_fast` -> `gpt-5.4-mini`
-- `standard` -> `gpt-5.4`
-- `strong` -> `gpt-5.5`
+- `small_fast` -> `gpt-5.6-luna`
+- `standard` -> `gpt-5.6-terra`
+- `strong` -> `gpt-5.6-sol`
 
 ## Pricing Facts
 
@@ -47,8 +52,11 @@ Important standard short-context prices:
 - `gpt-5.4-mini`: input `$0.75`, cached input `$0.075`, output `$4.50`
 - `gpt-5.4`: input `$2.50`, cached input `$0.25`, output `$15.00`
 - `gpt-5.5`: input `$5.00`, cached input `$0.50`, output `$30.00`
+- `gpt-5.6-luna`: input `$1.00`, cached input `$0.10`, output `$6.00`
+- `gpt-5.6-terra`: input `$2.50`, cached input `$0.25`, output `$15.00`
+- `gpt-5.6-sol`: input `$5.00`, cached input `$0.50`, output `$30.00`
 
-This means `gpt-5.5` is about 2x `gpt-5.4` on standard short-context input/output pricing, and `gpt-5.4` is substantially more expensive than `gpt-5.4-mini`.
+The GPT-5.6 tiers preserve the same capability progression while making Luna, Terra, and Sol the active OpenAI/Codex routes. GPT-5.4 remains a compatibility fallback when GPT-5.6 is unavailable.
 
 ## Benchmark Facts
 
@@ -86,6 +94,8 @@ Use `strong` when:
 - The task is ambiguous, broad, or hard to verify.
 - The task involves deep debugging, security review, architecture, long-context synthesis, or tool-heavy agent work.
 
+Use GPT-5.6 Sol specifically when the task is high-risk, ambiguous, difficult to verify, or requires deep debugging, architecture, large-context synthesis, or tool-heavy agent work. Use GPT-5.6 Terra for normal multi-step coding and GPT-5.6 Luna for simple low-risk work.
+
 ## Important Caveat
 
 Benchmarks are not routing truth. They are priors.
@@ -108,3 +118,4 @@ Those observations should update the catalog's quality scores over time.
 - OpenAI API pricing: `https://developers.openai.com/api/docs/pricing`
 - OpenAI GPT-5.5 guide: `https://developers.openai.com/api/docs/guides/latest-model`
 - OpenAI GPT-5.4 release and benchmarks: `https://openai.com/index/introducing-gpt-5-4/`
+- OpenAI GPT-5.6 model catalog: `https://developers.openai.com/api/docs/models`

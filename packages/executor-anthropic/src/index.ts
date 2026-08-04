@@ -1,8 +1,9 @@
+import { request as httpRequest } from "node:http"
 import { request as httpsRequest } from "node:https"
 import { z } from "zod"
-import { estimateTokenCost } from "@model-orchestration/executor-core"
+import { ExecutorOutputLimitError, estimateTokenCost } from "@model-orchestration/executor-core"
 import type { AgentExecutor, ExecutorRunContext, ReviewResult, TokenUsage, WorkerResult } from "@model-orchestration/executor-core"
-import type { WorkerBrief } from "@model-orchestration/shared-types"
+import type { WorkerBrief } from "@garida/types"
 
 export type ProviderRequest = {
   readonly url: string
@@ -26,6 +27,7 @@ export type AnthropicExecutorOptions = {
   readonly anthropic_version?: string
   readonly max_tokens?: number
   readonly transport?: ProviderTransport
+  readonly max_response_bytes?: number
 }
 
 export type ProviderRetryClassification = "retryable" | "fatal"
@@ -64,6 +66,9 @@ const ProviderErrorSchema = z
 export function createAnthropicExecutor(options: AnthropicExecutorOptions = {}): AgentExecutor {
   return {
     provider: "anthropic",
+    supports_route(route): boolean {
+      return route.provider === "anthropic_claude"
+    },
     async executeWorker(brief: WorkerBrief, context: ExecutorRunContext): Promise<WorkerResult> {
       const response = await sendAnthropicRequest(brief, context, options)
       return responseToWorkerResult(brief, response, context)
@@ -76,7 +81,10 @@ export function createAnthropicExecutor(options: AnthropicExecutorOptions = {}):
         reviewer_id: brief.id,
         status: response.status >= 200 && response.status < 300 ? "passed" : "failed",
         output,
-        findings: response.status >= 200 && response.status < 300 ? [] : [output]
+        findings: response.status >= 200 && response.status < 300 ? [] : [output],
+        ...(response.status >= 200 && response.status < 300
+          ? {}
+          : { retry_classification: classifyAnthropicResponseStatus(response.status) })
       }
     }
   }
@@ -107,7 +115,7 @@ async function sendAnthropicRequest(
     }
   }
 
-  const transport = options.transport ?? createHttpsJsonTransport()
+  const transport = options.transport ?? createJsonTransport(normalizeByteLimit(options.max_response_bytes))
   return transport.send(buildAnthropicRequest(brief, context, options, apiKey), context)
 }
 
@@ -166,7 +174,8 @@ function responseToWorkerResult(brief: WorkerBrief, response: ProviderResponse, 
     status: "failed",
     output: error,
     evidence: ["anthropic-executor-api"],
-    error
+    error,
+    retry_classification: classifyAnthropicResponseStatus(response.status)
   }
 }
 
@@ -212,27 +221,55 @@ function buildPrompt(brief: WorkerBrief): string {
   ].join("\n")
 }
 
-function createHttpsJsonTransport(): ProviderTransport {
+function createJsonTransport(maxResponseBytes: number): ProviderTransport {
   return {
-    async send(providerRequest: ProviderRequest): Promise<ProviderResponse> {
-      return sendHttpsJson(providerRequest)
+    async send(providerRequest: ProviderRequest, context: ExecutorRunContext): Promise<ProviderResponse> {
+      return sendJson(providerRequest, context.signal, maxResponseBytes)
     }
   }
 }
 
-async function sendHttpsJson(providerRequest: ProviderRequest): Promise<ProviderResponse> {
+async function sendJson(
+  providerRequest: ProviderRequest,
+  signal: AbortSignal | undefined,
+  maxResponseBytes: number
+): Promise<ProviderResponse> {
   return new Promise((resolve, reject) => {
     const url = new URL(providerRequest.url)
-    const req = httpsRequest(
+    const request = url.protocol === "http:" ? httpRequest : httpsRequest
+    let settled = false
+    const rejectOnce = (error: Error): void => {
+      if (settled) return
+      settled = true
+      reject(error)
+    }
+    const req = request(
       url,
       {
         method: providerRequest.method,
-        headers: providerRequest.headers
+        headers: providerRequest.headers,
+        ...(signal === undefined ? {} : { signal })
       },
       (res) => {
         const chunks: Buffer[] = []
-        res.on("data", (chunk: Buffer) => chunks.push(chunk))
+        let receivedBytes = 0
+        res.on("data", (value: Buffer | string) => {
+          if (settled) return
+          const chunk = Buffer.isBuffer(value) ? value : Buffer.from(value)
+          receivedBytes += chunk.byteLength
+          if (receivedBytes > maxResponseBytes) {
+            const error = new ExecutorOutputLimitError("anthropic-response", maxResponseBytes)
+            res.destroy(error)
+            req.destroy(error)
+            rejectOnce(error)
+            return
+          }
+          chunks.push(chunk)
+        })
+        res.on("error", rejectOnce)
         res.on("end", () => {
+          if (settled) return
+          settled = true
           resolve({
             status: res.statusCode ?? 0,
             body: parseJsonBody(Buffer.concat(chunks).toString("utf8"))
@@ -240,10 +277,14 @@ async function sendHttpsJson(providerRequest: ProviderRequest): Promise<Provider
         })
       }
     )
-    req.on("error", reject)
+    req.on("error", rejectOnce)
     req.write(providerRequest.body)
     req.end()
   })
+}
+
+function normalizeByteLimit(value: number | undefined): number {
+  return value !== undefined && Number.isFinite(value) && value > 0 ? Math.floor(value) : 1_048_576
 }
 
 function parseJsonBody(body: string): unknown {

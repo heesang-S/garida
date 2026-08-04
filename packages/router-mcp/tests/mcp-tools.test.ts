@@ -32,7 +32,7 @@ describe("MCP tool handlers", () => {
       preferred_provider: "openai_codex"
     })
 
-    expect(result.route.model_id).toBe("gpt-5.5")
-    expect(result.execution_plan.worker_briefs[0]?.model_id).toBe("gpt-5.5")
+    expect(result.route.model_id).toBe("gpt-5.6-sol")
+    expect(result.execution_plan.worker_briefs[0]?.model_id).toBe("gpt-5.6-sol")
   })
 })

@@ -1,5 +1,5 @@
 import { createRouter, type PreparedAgentExecution } from "./router.js"
-import type { RouteOptions } from "@model-orchestration/shared-types"
+import type { RouteOptions } from "@garida/types"
 
 export type { PreparedAgentExecution } from "./router.js"
 

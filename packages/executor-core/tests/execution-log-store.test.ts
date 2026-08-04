@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest"
 
 import { createJsonlExecutionLogStore, createMemoryExecutionLogStore, runExecutionPlan } from "../src/index.js"
 import type { AgentExecutor, ExecutorRunContext, WorkerResult } from "../src/index.js"
-import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
+import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@garida/types"
 
 const route: RouteDecision = {
   model_class: "standard",
@@ -81,9 +81,10 @@ describe("execution log store", () => {
       started_at_ms: 100,
       completed_at_ms: 125,
       duration_ms: 25,
-      synthesis_strategy: "Return direct result."
+      synthesis_strategy: "[redacted]"
     })
-    expect(entries[0]?.worker_results[0]?.output).toBe("gpt-5.4")
+    expect(entries[0]?.worker_results[0]?.output).toBe("[redacted]")
+    expect(entries[0]?.execution_plan.worker_briefs[0]?.objective).toBe("[redacted]")
   })
 
   it("persists completed execution records to a JSONL file", async () => {
@@ -123,5 +124,67 @@ describe("execution log store", () => {
       provider: "mock",
       model_id: "gpt-5.4"
     })
+  })
+
+  it("records prompt and output text only when opted in and applies the redaction hook", async () => {
+    const store = createMemoryExecutionLogStore()
+    const executor: AgentExecutor = {
+      provider: "mock",
+      async executeWorker(brief): Promise<WorkerResult> {
+        return {
+          worker_id: brief.id,
+          status: "succeeded",
+          output: "token=worker-secret useful output",
+          evidence: ["Bearer evidence-secret"]
+        }
+      }
+    }
+
+    await runExecutionPlan({
+      execution_plan: executionPlan,
+      route,
+      executor,
+      execution_log_store: store,
+      log_policy: {
+        include_prompts: true,
+        include_outputs: true,
+        redact(value): string {
+          return value.replaceAll("feature", "[feature]")
+        }
+      }
+    })
+
+    const entry = (await store.list())[0]
+    expect(entry?.run_id).toMatch(/^run-\d+-[0-9a-f-]{36}$/)
+    expect(entry?.execution_plan.worker_briefs[0]?.title).toBe("Implement [feature]")
+    expect(entry?.worker_results[0]?.output).toBe("token=[redacted] useful output")
+    expect(entry?.worker_results[0]?.evidence[0]).toBe("Bearer [redacted]")
+  })
+
+  it("records failed, cancelled, and timed-out run statuses", async () => {
+    for (const workerStatus of ["failed", "cancelled", "timed_out"] as const) {
+      const store = createMemoryExecutionLogStore()
+      const executor: AgentExecutor = {
+        provider: "mock",
+        async executeWorker(brief): Promise<WorkerResult> {
+          return {
+            worker_id: brief.id,
+            status: workerStatus,
+            output: workerStatus,
+            evidence: []
+          }
+        }
+      }
+
+      const result = await runExecutionPlan({
+        execution_plan: executionPlan,
+        route,
+        executor,
+        execution_log_store: store
+      })
+
+      expect(result.status).toBe(workerStatus === "timed_out" ? "timed_out" : workerStatus)
+      expect((await store.list())[0]?.status).toBe(result.status)
+    }
   })
 })

@@ -17,7 +17,7 @@ import {
   type RoutingPolicy,
   type Rule,
   type TaskAssessment
-} from "@model-orchestration/shared-types"
+} from "@garida/types"
 
 type CatalogModel = {
   readonly model_id: string

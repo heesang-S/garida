@@ -39,7 +39,7 @@ importers:
       '@model-orchestration/executor-core':
         specifier: workspace:*
         version: link:../executor-core
-      '@model-orchestration/shared-types':
+      '@garida/types':
         specifier: workspace:*
         version: link:../shared-types
       zod:
@@ -61,7 +61,7 @@ importers:
       '@model-orchestration/executor-core':
         specifier: workspace:*
         version: link:../executor-core
-      '@model-orchestration/shared-types':
+      '@garida/types':
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
@@ -80,7 +80,7 @@ importers:
       '@model-orchestration/executor-core':
         specifier: workspace:*
         version: link:../executor-core
-      '@model-orchestration/shared-types':
+      '@garida/types':
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
@@ -96,7 +96,7 @@ importers:
 
   packages/executor-core:
     dependencies:
-      '@model-orchestration/shared-types':
+      '@garida/types':
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
@@ -115,7 +115,7 @@ importers:
       '@model-orchestration/executor-core':
         specifier: workspace:*
         version: link:../executor-core
-      '@model-orchestration/shared-types':
+      '@garida/types':
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
@@ -134,7 +134,7 @@ importers:
       '@model-orchestration/executor-core':
         specifier: workspace:*
         version: link:../executor-core
-      '@model-orchestration/shared-types':
+      '@garida/types':
         specifier: workspace:*
         version: link:../shared-types
     devDependencies:
@@ -153,7 +153,7 @@ importers:
       '@model-orchestration/executor-core':
         specifier: workspace:*
         version: link:../executor-core
-      '@model-orchestration/shared-types':
+      '@garida/types':
         specifier: workspace:*
         version: link:../shared-types
       zod:
@@ -172,8 +172,8 @@ importers:
 
   packages/router-core:
     dependencies:
-      '@model-orchestration/shared-types':
-        specifier: workspace:*
+      '@garida/types':
+        specifier: 0.1.0-alpha.1
         version: link:../shared-types
       ajv:
         specifier: ^8.17.1
@@ -194,9 +194,9 @@ importers:
       '@hono/node-server':
         specifier: ^2.0.6
         version: 2.0.6(hono@4.12.27)
-      '@model-orchestration/router-mcp':
-        specifier: workspace:*
-        version: link:../router-mcp
+      '@garida/core':
+        specifier: 0.1.0-alpha.1
+        version: link:../router-core
       hono:
         specifier: ^4.12.27
         version: 4.12.27
@@ -216,11 +216,11 @@ importers:
 
   packages/router-mcp:
     dependencies:
-      '@model-orchestration/router-core':
-        specifier: workspace:*
+      '@garida/core':
+        specifier: 0.1.0-alpha.1
         version: link:../router-core
-      '@model-orchestration/shared-types':
-        specifier: workspace:*
+      '@garida/types':
+        specifier: 0.1.0-alpha.1
         version: link:../shared-types
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0
@@ -243,7 +243,27 @@ importers:
 
   plugins/claude-router: {}
 
-  plugins/codex-router: {}
+  plugins/codex-router:
+    dependencies:
+      '@model-orchestration/executor-codex':
+        specifier: workspace:*
+        version: link:../../packages/executor-codex
+      '@model-orchestration/executor-core':
+        specifier: workspace:*
+        version: link:../../packages/executor-core
+      '@garida/core':
+        specifier: workspace:*
+        version: link:../../packages/router-core
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.13.2
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.6(@types/node@24.13.2)
 
   plugins/devin-router: {}
 

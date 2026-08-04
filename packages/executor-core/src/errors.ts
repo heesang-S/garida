@@ -14,3 +14,30 @@ export class ExecutorTimeoutError extends Error {
     this.name = "ExecutorTimeoutError"
   }
 }
+
+export class ExecutorCancelledError extends Error {
+  constructor(readonly brief_id: string) {
+    super(`Executor cancelled for '${brief_id}'.`)
+    this.name = "ExecutorCancelledError"
+  }
+}
+
+export class ExecutorOutputLimitError extends Error {
+  constructor(
+    readonly operation_id: string,
+    readonly max_output_bytes: number
+  ) {
+    super(`Executor output for '${operation_id}' exceeded ${max_output_bytes} bytes.`)
+    this.name = "ExecutorOutputLimitError"
+  }
+}
+
+export class UnsupportedExecutorError extends Error {
+  constructor(
+    readonly provider: string,
+    readonly reason: string
+  ) {
+    super(`Executor '${provider}' is unsupported: ${reason}`)
+    this.name = "UnsupportedExecutorError"
+  }
+}

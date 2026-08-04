@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { createExecutionPlan } from "../src/execution-plan.js"
-import type { RouteDecision, TaskAssessment } from "@model-orchestration/shared-types"
+import type { RouteDecision, TaskAssessment } from "@garida/types"
 
 const baseAssessment: TaskAssessment = {
   task_type: "planning",

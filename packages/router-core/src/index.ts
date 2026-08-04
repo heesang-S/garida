@@ -50,4 +50,4 @@ export type {
   TaskType,
   ToolNeed,
   WorkerBrief
-} from "@model-orchestration/shared-types"
+} from "@garida/types"

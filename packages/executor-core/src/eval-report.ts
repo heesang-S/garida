@@ -87,7 +87,7 @@ export function formatExecutionEvalReport(report: ExecutionEvalReport): string {
 }
 
 function countFailedWorkers(workerResults: readonly WorkerResult[]): number {
-  return workerResults.filter((result) => result.status === "failed").length
+  return workerResults.filter((result) => result.status !== "succeeded").length
 }
 
 function sumWorkerTokens(workerResults: readonly WorkerResult[]): number {

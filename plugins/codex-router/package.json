@@ -3,9 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
   "scripts": {
-    "build": "node -e \"console.log('codex-router plugin has no build step')\"",
+    "build": "tsc",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@model-orchestration/executor-codex": "workspace:*",
+    "@model-orchestration/executor-core": "workspace:*",
+    "@garida/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

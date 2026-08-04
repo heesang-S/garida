@@ -1,6 +1,6 @@
 # Garida public `0.1.0-alpha` release tracker
 
-This is the operational companion to the [public release plan](./public-release-plan.md). Update checkbox state, owner, evidence link, and blocker notes as work completes. Keep unchecked work actionable; do not mark a task complete until its listed acceptance evidence exists.
+This is the operational companion to the [public release plan](./public-release-plan.md). The repository-first follow-up roadmap is in [`public-repo-milestones.md`](./public-repo-milestones.md), with visibility and settings steps in [`github-repository-setup.md`](./github-repository-setup.md). Update checkbox state, owner, evidence link, and blocker notes as work completes. Keep unchecked work actionable; do not mark a task complete until its listed acceptance evidence exists.
 
 ## Release metadata
 
@@ -13,7 +13,7 @@ This is the operational companion to the [public release plan](./public-release-
 | Primary universal adapter | MCP |
 | HTTP status | Experimental |
 | Executors/plugins | Unpublished for first alpha |
-| Package names | Subject to registry availability |
+| Package names | `@garida/types`, `@garida/core`, `@garida/mcp`, `@garida/http` |
 | License | MIT (selected) |
 
 ## Status guidance
@@ -27,19 +27,20 @@ This is the operational companion to the [public release plan](./public-release-
 
 ### PR 1 — Public contract
 
-- [ ] Confirm npm scope availability and `garida-mcp` executable name.
-- [ ] Set and document Node `>=22.13`, Node 22/24 support, pinned pnpm, and ESM-only alpha support.
+- [~] Confirm npm scope availability and `garida-mcp` executable name; registry names are unregistered, but scope ownership still needs the publishing account.
+- [x] Set and document Node `>=22.13`, Node 22/24 support, pinned pnpm, and ESM-only alpha support.
 - [ ] Document product positioning: deterministic, explainable model routing.
 - [ ] Document library foundation, MCP primary adapter, HTTP experimental status, and executor/plugin exclusion.
 - [ ] Document limitations and non-goals without universal-optimality claims.
-- [ ] Acceptance: root remains private and public contracts carry no unsupported promise.
+- [x] Acceptance: root remains private and public contracts carry no unsupported promise; README now labels the repository as an experimental alpha.
 
 ### PR 2 — OSS essentials
 
 - [x] Select MIT and add the standard `LICENSE` file.
-- [ ] Add `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SUPPORT.md`, and `CHANGELOG.md`.
+- [x] Add `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SUPPORT.md`, and `CHANGELOG.md`.
 - [ ] Add issue/PR templates, `CODEOWNERS`, repository metadata, and format/lint contribution instructions.
-- [ ] Remove personal filesystem paths, credentials, and machine-specific configuration from public material.
+- [x] Remove personal filesystem paths, credentials, and machine-specific configuration from public material.
+- [x] Add initial Node 22/24 CI and Dependabot configuration.
 - [ ] Acceptance: clean-clone contributor onboarding succeeds and GitHub recognizes the chosen license.
 
 ## Milestone 2 — Stable portable routing core
@@ -55,13 +56,14 @@ This is the operational companion to the [public release plan](./public-release-
 
 ### PR 4 — Package portability
 
-- [ ] Set `private: false` only on intended release packages.
-- [ ] Add package `exports`, types, files, engines, license/repository metadata, and publish configuration.
-- [ ] Verify runtime policy/catalog/schema assets ship in tarballs.
-- [ ] Convert workspace dependencies to publish-safe ranges.
+- [x] Set `private: false` only on the current intended release packages.
+- [x] Add package `exports`, types, files, engines, license/repository metadata, and publish configuration.
+- [x] Verify runtime policy/catalog/schema assets ship in `npm pack --dry-run` output.
+- [x] Convert public-package workspace dependencies to publish-safe `^0.1.0` ranges.
 - [ ] Replace hard-coded Codex binary locations with PATH lookup or `GARIDA_CODEX_COMMAND`.
 - [ ] Remove unsafe bypass flags from public examples.
-- [ ] Add `publint`, `npm pack --dry-run`, and blank-project install/import/typecheck checks.
+- [ ] Add `publint`.
+- [x] Run `npm pack --dry-run` plus a blank-project install/import/typecheck smoke check.
 - [ ] Acceptance: packed artifacts work in a clean project.
 
 ## Milestone 3 — Integration surfaces
@@ -87,20 +89,36 @@ This is the operational companion to the [public release plan](./public-release-
 - [ ] Ensure executor and host-plugin packages remain unpublished and unadvertised.
 - [ ] Acceptance: timeout, no-retry, bounded-concurrency, and redaction tests pass.
 
-### PR 7 — Experimental HTTP adapter
+### PR 6.5 — Fast competitive evaluation gate `[~]`
 
-- [ ] Depend directly on core, not MCP helpers.
-- [ ] Export `createHttpApp({ router })`.
-- [ ] Implement `/v1/route`, `/v1/plan`, and `/healthz`.
-- [ ] Default bind address to `127.0.0.1`.
-- [ ] Add request limits, timeouts, and redacted errors.
-- [ ] Document production exposure requirements: auth, TLS, CORS, and rate limiting.
+- [ ] Run the minimal 12-task / two-arm evaluation in
+  [`small-live-benchmark-plan.md`](./small-live-benchmark-plan.md).
+- [x] Run the quota-bounded six-call directional variant; see
+  [`small-live-codex-2026-08-02.md`](../evals/small-live-codex-2026-08-02.md).
+- [x] Add the zero-token public-repository capability matrix in
+  [`public-repo-capability-matrix.md`](./public-repo-capability-matrix.md).
+- [ ] Enforce the 24-call, 256-token, 30-second-per-task, and USD 3 limits.
+- [ ] Record sanitized JSONL plus a Markdown summary with pinned model/pricing
+  metadata.
+- [ ] Mark the result promising, adjust-routing, or inconclusive using the
+  directional thresholds in the benchmark plan.
+- [ ] Do not treat this small sample as the final PR 8 launch gate.
+
+### PR 7 — Experimental HTTP adapter `[~]`
+
+- [x] Depend directly on core, not MCP helpers.
+- [x] Export `createHttpApp({ router })`.
+- [x] Implement `/v1/route`, `/v1/plan`, and `/healthz`.
+- [x] Default bind address to `127.0.0.1`.
+- [x] Add request limits, timeouts, and redacted errors.
+- [x] Document production exposure requirements: auth, TLS, CORS, and rate limiting.
 - [ ] Acceptance: contract tests show HTTP and core return equivalent route results.
 
 ## Milestone 4 — Evidence and automation
 
 ### PR 8 — Evaluation suite
 
+- [x] Complete the zero-token public-repository capability comparison.
 - [ ] Build a versioned, sanitized suite for coding, debugging, testing, writing, planning, review, and data analysis.
 - [ ] Compare Garida routing with fixed small, standard, and strong model baselines.
 - [ ] Collect success, cost/success, p50/p95 latency, token use, failure rate, route distribution, and delegation/reviewer overhead.
@@ -132,8 +150,8 @@ This is the operational companion to the [public release plan](./public-release-
 
 | Item | Status | Decision / owner / evidence |
 | --- | --- | --- |
-| npm scope and package names | Open | Confirm availability before PR 1/4. |
-| `garida-mcp` executable name | Open | Confirm availability before PR 1/5. |
+| npm scope and package names | In progress | Public package metadata now uses `@garida/*`; scope ownership must be confirmed by the publishing account. See [`npm-account-setup.md`](./npm-account-setup.md). |
+| `garida-mcp` executable name | Resolved | `@garida/mcp` exposes `garida-mcp`; registry uniqueness still requires publish-account confirmation. |
 | License selection | Resolved | MIT selected and recorded in the repository `LICENSE`; package metadata should use SPDX identifier `MIT` before publishing. |
 | Public package set | Open | First alpha: core + MCP; HTTP only if explicitly released as experimental. |
 | Evaluation environment/budget | Open | Define reproducible model versions and budget before PR 8. |
@@ -150,6 +168,6 @@ This is the operational companion to the [public release plan](./public-release-
 - [ ] Public evaluation meets all three thresholds and includes limitations.
 - [ ] Trusted publishing/provenance is configured for `next`, not `latest`.
 - [ ] Registry-installed library and MCP quickstarts are manually verified.
-- [ ] Release notes/changelog entry are ready for `0.1.0-alpha.1`.
+- [x] Release notes/changelog entry are ready for `0.1.0-alpha.1`.
 
 After each milestone, update this tracker and reconcile any scope change with the [public release plan](./public-release-plan.md).

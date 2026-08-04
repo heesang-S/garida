@@ -1,7 +1,7 @@
 import { Ajv2020, type ErrorObject, type ValidateFunction } from "ajv/dist/2020.js"
 
 import taskAssessmentSchema from "../routing/task-assessment-schema.json" with { type: "json" }
-import type { TaskAssessment } from "@model-orchestration/shared-types"
+import type { TaskAssessment } from "@garida/types"
 
 export class TaskAssessmentValidationError extends Error {
   readonly errors: readonly ErrorObject[]

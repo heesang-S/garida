@@ -1,4 +1,4 @@
-import type { ModelPricing } from "@model-orchestration/shared-types"
+import type { ModelPricing } from "@garida/types"
 
 export type TokenUsage = {
   readonly input_tokens: number

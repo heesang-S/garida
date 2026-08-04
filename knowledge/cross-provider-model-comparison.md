@@ -1,6 +1,6 @@
 # Cross-Provider Model Comparison
 
-Research date: 2026-06-26
+Research date: 2026-07-17
 
 This note compares the current Codex/OpenAI routing classes with Claude model tiers. Use it as a routing prior, not as final truth. The router should still collect its own success, cost, latency, and retry data.
 
@@ -18,9 +18,9 @@ What is the cheapest model that can satisfy this task's risk, quality, context, 
 
 | Routing tier | OpenAI/Codex model | Claude model | Best use |
 | --- | --- | --- | --- |
-| Small / cheap | `gpt-5.4-mini` | `claude-haiku-4-5` | Classification, extraction, simple writing, simple transforms, low-risk sub-agents |
-| Balanced | `gpt-5.4` | `claude-sonnet-4-6` | Normal coding, testing, tool use, synthesis, medium-risk planning |
-| Strong | `gpt-5.5` | `claude-opus-4-8` | Hard debugging, architecture, high-risk review, long-horizon agentic work |
+| Small / cheap | `gpt-5.6-luna` | `claude-haiku-4-5` | Classification, extraction, simple writing, simple transforms, low-risk sub-agents |
+| Balanced | `gpt-5.6-terra` | `claude-sonnet-4-6` | Normal coding, testing, tool use, synthesis, medium-risk planning |
+| Strong | `gpt-5.6-sol` | `claude-opus-4-8` | Hard debugging, architecture, high-risk review, long-horizon agentic work |
 | Ultra / special | `gpt-5.5-pro` or `gpt-5.4-pro` | `claude-fable-5` | Most demanding reasoning when cost matters less than quality |
 
 ## Price Snapshot
@@ -29,11 +29,14 @@ Prices are standard API prices in USD per 1M tokens.
 
 | Model | Input | Output | Notes |
 | --- | ---: | ---: | --- |
-| `gpt-5.4-mini` | `$0.75` | `$4.50` | Cheapest current Codex/OpenAI route in this project |
+| `gpt-5.4-mini` | `$0.75` | `$4.50` | Legacy compatibility reference; not an active route |
 | `claude-haiku-4-5` | `$1.00` | `$5.00` | Fast Claude model with near-frontier positioning |
-| `gpt-5.4` | `$2.50` | `$15.00` | Default OpenAI/Codex balanced route |
+| `gpt-5.4` | `$2.50` | `$15.00` | Legacy compatibility fallback; Terra is active |
 | `claude-sonnet-4-6` | `$3.00` | `$15.00` | Balanced Claude coding and agent model |
-| `gpt-5.5` | `$5.00` | `$30.00` | Strong OpenAI/Codex route |
+| `gpt-5.5` | `$5.00` | `$30.00` | Legacy compatibility reference; Sol is active |
+| `gpt-5.6-luna` | `$1.00` | `$6.00` | Active low-cost OpenAI/Codex route |
+| `gpt-5.6-terra` | `$2.50` | `$15.00` | Active balanced OpenAI/Codex route |
+| `gpt-5.6-sol` | `$5.00` | `$30.00` | Active strong OpenAI/Codex route |
 | `claude-opus-4-8` | `$5.00` | `$25.00` | Strong Claude Opus-tier route |
 | `claude-fable-5` | `$10.00` | `$50.00` | Anthropic's most capable widely released model |
 | `gpt-5.5-pro` | `$30.00` | `$180.00` | Reserve for exceptional cases |
@@ -42,11 +45,11 @@ Prices are standard API prices in USD per 1M tokens.
 
 ### OpenAI / Codex
 
-`gpt-5.4-mini` should be used when cost and speed matter more than deep reasoning. It is a good default for task classification and simple sub-agent work.
+`gpt-5.4-mini` is retained as a legacy compatibility reference. For new routing decisions, use GPT-5.6 Luna when cost and speed matter more than deep reasoning.
 
-`gpt-5.4` is the best default for ordinary coding and agent work in this project. OpenAI reports strong public results for GPT-5.4 on professional-work and agentic benchmarks, including GDPval, SWE-Bench Pro Public, OSWorld-Verified, Toolathlon, BrowseComp, and MMMU-Pro.
+`gpt-5.4` remains a compatibility fallback for ordinary coding and agent work when GPT-5.6 is unavailable. The active balanced route is now `gpt-5.6-terra`.
 
-`gpt-5.5` should be used when the work is complex, ambiguous, high-risk, tool-heavy, or requires stronger judgment. OpenAI describes it as suited for complex production workflows, coding, grounded assistants, long-context retrieval, and tool-heavy agents.
+`gpt-5.6-sol` should be used when the work is complex, ambiguous, high-risk, tool-heavy, or requires stronger judgment. `gpt-5.6-terra` is the default for normal multi-step work, and `gpt-5.6-luna` is for simple low-risk tasks.
 
 ### Claude
 
@@ -108,9 +111,9 @@ Consider Claude Fable or OpenAI Pro models only when:
 If the provider is fixed to Codex/OpenAI:
 
 ```text
-small_fast = gpt-5.4-mini
-standard = gpt-5.4
-strong = gpt-5.5
+small_fast = gpt-5.6-luna
+standard = gpt-5.6-terra
+strong = gpt-5.6-sol
 ultra_strong = gpt-5.5-pro only by explicit escalation
 ```
 

@@ -1,6 +1,8 @@
+#!/usr/bin/env node
+
 import { loadJsonFile } from "./load-json.js"
 import { routeTask } from "./router.js"
-import { MODEL_PROVIDERS, type ModelProvider } from "@model-orchestration/shared-types"
+import { MODEL_PROVIDERS, type ModelProvider } from "@garida/types"
 import { validateTaskAssessment } from "./validate-assessment.js"
 
 async function main(): Promise<void> {

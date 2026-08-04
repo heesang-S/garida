@@ -36,7 +36,7 @@ describe("HTTP routing app", () => {
 
     expect(response.status).toBe(200)
     const body = RouteResponseSchema.parse(await response.json())
-    expect(body.model_id).toBe("gpt-5.4-mini")
+    expect(body.model_id).toBe("gpt-5.6-luna")
   })
 
   it("prepares execution over HTTP", async () => {

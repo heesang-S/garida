@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { matchesConditions } from "../src/rule-evaluator.js"
-import type { TaskAssessment } from "@model-orchestration/shared-types"
+import type { TaskAssessment } from "@garida/types"
 
 const assessment: TaskAssessment = {
   task_type: "debugging",

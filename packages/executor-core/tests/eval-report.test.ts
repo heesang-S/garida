@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import { formatExecutionEvalReport, summarizeExecutionLogs } from "../src/index.js"
 import type { ExecutionLogEntry } from "../src/index.js"
-import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
+import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@garida/types"
 
 const openAiRoute: RouteDecision = {
   model_class: "standard",
@@ -136,5 +136,23 @@ describe("eval report", () => {
     expect(output).toContain("Total runs: 2")
     expect(output).toContain("Total cost USD: 0.009")
     expect(output).toContain("openai | runs=1 | worker_failures=0 | cost_usd=0.006")
+  })
+
+  it("counts cancelled and timed-out workers as unsuccessful", () => {
+    const report = summarizeExecutionLogs([
+      {
+        ...entries[0]!,
+        status: "timed_out",
+        worker_results: [
+          { worker_id: "cancelled", status: "cancelled", output: "", evidence: [] },
+          { worker_id: "timed-out", status: "timed_out", output: "", evidence: [] },
+          { worker_id: "ok", status: "succeeded", output: "", evidence: [] }
+        ]
+      }
+    ])
+
+    expect(report.failed_worker_results).toBe(2)
+    expect(report.by_provider[0]?.worker_failures).toBe(2)
+    expect(report.completed_runs).toBe(0)
   })
 })

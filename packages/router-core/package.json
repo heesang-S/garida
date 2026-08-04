@@ -1,25 +1,59 @@
 {
-  "name": "@model-orchestration/router-core",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@garida/core",
+  "version": "0.1.0-alpha.1",
+  "description": "Deterministic, explainable model routing and execution-plan generation.",
+  "license": "MIT",
   "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js"
+      "import": "./dist/src/index.js",
+      "default": "./dist/src/index.js"
     }
   },
+  "files": [
+    "dist/src/**/*.js",
+    "dist/src/**/*.d.ts",
+    "dist/src/**/*.js.map",
+    "dist/src/**/*.d.ts.map",
+    "dist/routing/**/*.json",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heesang-S/garida.git",
+    "directory": "packages/router-core"
+  },
+  "homepage": "https://github.com/heesang-S/garida#readme",
+  "bugs": {
+    "url": "https://github.com/heesang-S/garida/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "model-routing",
+    "orchestration"
+  ],
   "bin": {
     "model-router": "./dist/src/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json && node ./scripts/copy-routing-assets.mjs",
     "route": "pnpm build && node dist/src/cli.js",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@model-orchestration/shared-types": "workspace:*",
+    "@garida/types": "0.1.0-alpha.1",
     "ajv": "^8.17.1"
   },
   "devDependencies": {

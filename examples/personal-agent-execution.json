@@ -2,7 +2,7 @@
   "route": {
     "model_class": "strong",
     "provider": "openai_codex",
-    "model_id": "gpt-5.4",
+    "model_id": "gpt-5.6-sol",
     "pricing_usd_per_1m_tokens": {
       "input": 1.25,
       "cached_input": 0.125,
@@ -25,7 +25,7 @@
         "objective": "Implement the requested change in the repo.",
         "model_class": "strong",
         "provider": "openai_codex",
-        "model_id": "gpt-5.4",
+        "model_id": "gpt-5.6-sol",
         "constraints": [
           "Keep the change scoped to the requested feature.",
           "Run targeted verification before reporting success."
@@ -43,7 +43,7 @@
       "objective": "Review the worker result for regressions and missing verification.",
       "model_class": "strong",
       "provider": "openai_codex",
-      "model_id": "gpt-5.4",
+      "model_id": "gpt-5.6-sol",
       "constraints": [
         "Focus on correctness, risk, and evidence."
       ],

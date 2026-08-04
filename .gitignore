@@ -3,3 +3,11 @@ dist/
 .tmp-tests/
 .pnpm-store/
 *.tsbuildinfo
+.omo/
+.env
+.env.*
+!.env.example
+coverage/
+.DS_Store
+evals/*/*.prompt.txt
+evals/*/*.stderr.log

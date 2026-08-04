@@ -1,6 +1,6 @@
 {
-  "version": "0.3.0",
-  "last_researched": "2026-06-26",
+  "version": "0.4.0",
+  "last_researched": "2026-07-17",
   "purpose": "Model cost/performance catalog used by the deterministic router after LLM task classification.",
   "routing_principle": "Choose the cheapest available model class that satisfies required quality, risk, context, and latency constraints.",
   "data_quality": {
@@ -34,6 +34,18 @@
     "gpt-5.5": {
       "description": "Frontier model for complex coding, research, and real-world work.",
       "source": "current Codex app tool metadata exposed in this session"
+    },
+    "gpt-5.6-luna": {
+      "description": "Fast, low-cost model for simple and low-risk work.",
+      "source": "current Codex app tool metadata exposed in this session"
+    },
+    "gpt-5.6-terra": {
+      "description": "Balanced model for everyday coding and multi-step agent work.",
+      "source": "current Codex app tool metadata exposed in this session"
+    },
+    "gpt-5.6-sol": {
+      "description": "Strong model for complex, high-risk, and tool-heavy work.",
+      "source": "current Codex app tool metadata exposed in this session"
     }
   },
   "default_provider": "openai_codex",
@@ -42,15 +54,15 @@
       "description": "Default provider route for models directly available in the current Codex project workflow.",
       "models": {
         "small_fast": {
-          "model_id": "gpt-5.4-mini",
+          "model_id": "gpt-5.6-luna",
           "pricing_usd_per_1m_tokens": {
-            "input": 0.75,
-            "cached_input": 0.075,
-            "output": 4.5
+            "input": 1.0,
+            "cached_input": 0.1,
+            "output": 6.0
           }
         },
         "standard": {
-          "model_id": "gpt-5.4",
+          "model_id": "gpt-5.6-terra",
           "pricing_usd_per_1m_tokens": {
             "input": 2.5,
             "cached_input": 0.25,
@@ -58,7 +70,7 @@
           }
         },
         "strong": {
-          "model_id": "gpt-5.5",
+          "model_id": "gpt-5.6-sol",
           "pricing_usd_per_1m_tokens": {
             "input": 5.0,
             "cached_input": 0.5,
@@ -99,44 +111,58 @@
   },
   "model_classes": {
     "small_fast": {
-      "model_id": "gpt-5.4-mini",
+      "model_id": "gpt-5.6-luna",
       "description": "Cheapest capable model class for simple, low-risk, easy-to-verify work.",
+      "context_window_tokens": 1050000,
+      "max_output_tokens": 128000,
       "cost_class": "low",
       "latency_class": "low",
       "reasoning_strength": "low",
       "recommended_reasoning_effort": "low",
-      "context_capacity": "small_to_medium",
+      "context_capacity": "large",
       "allowed_risk": ["low"],
       "api_pricing_usd_per_1m_tokens": {
         "standard": {
           "short_context": {
-            "input": 0.75,
-            "cached_input": 0.075,
-            "output": 4.5
+            "input": 1.0,
+            "cached_input": 0.1,
+            "output": 6.0
           },
-          "long_context": null
+          "long_context": {
+            "input": 2.0,
+            "cached_input": 0.2,
+            "output": 9.0
+          }
         },
         "batch": {
           "short_context": {
-            "input": 0.375,
-            "cached_input": 0.0375,
-            "output": 2.25
+            "input": 0.5,
+            "cached_input": 0.05,
+            "output": 3.0
           },
-          "long_context": null
+          "long_context": {
+            "input": 1.0,
+            "cached_input": 0.1,
+            "output": 4.5
+          }
         },
         "flex": {
           "short_context": {
-            "input": 0.375,
-            "cached_input": 0.0375,
-            "output": 2.25
+            "input": 0.5,
+            "cached_input": 0.05,
+            "output": 3.0
           },
-          "long_context": null
+          "long_context": {
+            "input": 1.0,
+            "cached_input": 0.1,
+            "output": 4.5
+          }
         },
         "priority": {
           "short_context": {
-            "input": 1.5,
-            "cached_input": 0.15,
-            "output": 9.0
+            "input": 2.0,
+            "cached_input": 0.2,
+            "output": 12.0
           },
           "long_context": null
         }
@@ -173,8 +199,10 @@
       }
     },
     "standard": {
-      "model_id": "gpt-5.4",
+      "model_id": "gpt-5.6-terra",
       "description": "Default model class for normal multi-step reasoning, coding, analysis, and synthesis.",
+      "context_window_tokens": 1050000,
+      "max_output_tokens": 128000,
       "cost_class": "medium",
       "latency_class": "medium",
       "reasoning_strength": "medium_high",
@@ -197,7 +225,7 @@
         "batch": {
           "short_context": {
             "input": 1.25,
-            "cached_input": 0.13,
+            "cached_input": 0.125,
             "output": 7.5
           },
           "long_context": {
@@ -209,7 +237,7 @@
         "flex": {
           "short_context": {
             "input": 1.25,
-            "cached_input": 0.13,
+            "cached_input": 0.125,
             "output": 7.5
           },
           "long_context": {
@@ -268,8 +296,10 @@
       }
     },
     "strong": {
-      "model_id": "gpt-5.5",
+      "model_id": "gpt-5.6-sol",
       "description": "Most capable model class for ambiguous, high-risk, high-context, or judgment-heavy work.",
+      "context_window_tokens": 1050000,
+      "max_output_tokens": 128000,
       "cost_class": "high",
       "latency_class": "medium_high",
       "reasoning_strength": "high",
@@ -315,9 +345,9 @@
         },
         "priority": {
           "short_context": {
-            "input": 12.5,
-            "cached_input": 1.25,
-            "output": 75.0
+            "input": 10.0,
+            "cached_input": 1.0,
+            "output": 60.0
           },
           "long_context": null
         }
@@ -431,7 +461,10 @@
         "gpt-5.5 pricing",
         "gpt-5.4 pricing",
         "gpt-5.4-mini pricing",
-        "gpt-5.3-codex pricing"
+        "gpt-5.3-codex pricing",
+        "gpt-5.6-luna pricing",
+        "gpt-5.6-terra pricing",
+        "gpt-5.6-sol pricing"
       ]
     },
     {
@@ -449,6 +482,15 @@
       "used_for": [
         "GPT-5.4 benchmark scores",
         "context and agentic workflow notes"
+      ]
+    },
+    {
+      "id": "openai_gpt_5_6_models_2026_07_17",
+      "url": "https://developers.openai.com/api/docs/models",
+      "used_for": [
+        "GPT-5.6 Luna, Terra, and Sol model IDs",
+        "context and maximum output limits",
+        "capability and routing guidance"
       ]
     },
         {

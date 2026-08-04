@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { ExecutorTimeoutError, runExecutionPlan } from "../src/index.js"
+import {
+  UnsupportedExecutorError,
+  createUnsupportedExecutor,
+  runExecutionPlan
+} from "../src/index.js"
 import type {
   AgentExecutor,
   ExecutorEvent,
@@ -8,7 +12,7 @@ import type {
   ReviewResult,
   WorkerResult
 } from "../src/index.js"
-import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
+import type { ExecutionPlan, RouteDecision, WorkerBrief } from "@garida/types"
 
 const route: RouteDecision = {
   model_class: "standard",
@@ -157,7 +161,7 @@ describe("runExecutionPlan", () => {
     ])
   })
 
-  it("does not retry worker execution when the retry classifier marks an error fatal", async () => {
+  it("records a failed worker without retrying when the retry classifier marks an error fatal", async () => {
     let calls = 0
     const executor: AgentExecutor = {
       provider: "mock",
@@ -167,35 +171,36 @@ describe("runExecutionPlan", () => {
       }
     }
 
-    await expect(
-      runExecutionPlan({
-        execution_plan: directExecutionPlan,
-        route,
-        executor,
-        retry_policy: {
-          max_attempts: 3,
-          delay_ms: 0,
-          classify_error(): "fatal" {
-            return "fatal"
-          }
+    const result = await runExecutionPlan({
+      execution_plan: directExecutionPlan,
+      route,
+      executor,
+      retry_policy: {
+        max_attempts: 3,
+        delay_ms: 0,
+        classify_error(): "fatal" {
+          return "fatal"
         }
-      })
-    ).rejects.toThrow("auth failed")
+      }
+    })
+
     expect(calls).toBe(1)
+    expect(result.status).toBe("failed")
+    expect(result.worker_results[0]).toMatchObject({ status: "failed", error: "auth failed" })
   })
 
-  it("fails worker execution when timeout expires", async () => {
+  it("aborts and records worker execution when timeout expires", async () => {
     vi.useFakeTimers()
+    let observedAbort = false
     const executor: AgentExecutor = {
-      provider: "mock",
-      async executeWorker(): Promise<WorkerResult> {
-        await new Promise((resolve) => setTimeout(resolve, 10_000))
-        return {
-          worker_id: "worker-1",
-          status: "succeeded",
-          output: "too late",
-          evidence: []
-        }
+      provider: "abort-aware",
+      async executeWorker(_brief, context): Promise<WorkerResult> {
+        return new Promise((_resolve, reject) => {
+          context.signal?.addEventListener("abort", () => {
+            observedAbort = true
+            reject(context.signal?.reason)
+          }, { once: true })
+        })
       }
     }
 
@@ -208,13 +213,155 @@ describe("runExecutionPlan", () => {
           worker_timeout_ms: 50
         }
       })
-      const assertion = expect(promise).rejects.toBeInstanceOf(ExecutorTimeoutError)
-
       await vi.advanceTimersByTimeAsync(51)
-
-      await assertion
+      const result = await promise
+      expect(observedAbort).toBe(true)
+      expect(result.status).toBe("timed_out")
+      expect(result.worker_results[0]?.status).toBe("timed_out")
     } finally {
       vi.useRealTimers()
     }
+  })
+
+  it("propagates caller cancellation to an abort-aware executor", async () => {
+    const controller = new AbortController()
+    let observedSignal: AbortSignal | undefined
+    const executor: AgentExecutor = {
+      provider: "abort-aware",
+      async executeWorker(_brief, context): Promise<WorkerResult> {
+        observedSignal = context.signal
+        return new Promise((_resolve, reject) => {
+          context.signal?.addEventListener("abort", () => reject(context.signal?.reason), { once: true })
+        })
+      }
+    }
+
+    const promise = runExecutionPlan({
+      execution_plan: directExecutionPlan,
+      route,
+      executor,
+      signal: controller.signal
+    })
+    controller.abort()
+
+    const result = await promise
+    expect(observedSignal?.aborted).toBe(true)
+    expect(result.status).toBe("cancelled")
+    expect(result.worker_results[0]?.status).toBe("cancelled")
+  })
+
+  it("runs only explicitly independent workers concurrently and respects the cap", async () => {
+    const briefs = Array.from({ length: 5 }, (_, index) => ({
+      ...workerBrief,
+      id: `worker-${index + 1}`
+    }))
+    let active = 0
+    let maximumActive = 0
+    const releases: Array<() => void> = []
+    const executor: AgentExecutor = {
+      provider: "mock",
+      async executeWorker(brief): Promise<WorkerResult> {
+        active += 1
+        maximumActive = Math.max(maximumActive, active)
+        await new Promise<void>((resolve) => releases.push(resolve))
+        active -= 1
+        return { worker_id: brief.id, status: "succeeded", output: brief.id, evidence: [] }
+      }
+    }
+    const promise = runExecutionPlan({
+      execution_plan: { ...directExecutionPlan, worker_briefs: briefs },
+      route,
+      executor,
+      concurrency_policy: {
+        max_concurrency: 2,
+        independent_worker_ids: briefs.map((brief) => brief.id)
+      }
+    })
+
+    await vi.waitFor(() => expect(releases).toHaveLength(2))
+    releases.splice(0).forEach((release) => release())
+    await vi.waitFor(() => expect(releases).toHaveLength(2))
+    releases.splice(0).forEach((release) => release())
+    await vi.waitFor(() => expect(releases).toHaveLength(1))
+    releases.splice(0).forEach((release) => release())
+
+    const result = await promise
+    expect(maximumActive).toBe(2)
+    expect(result.worker_results.map((worker) => worker.worker_id)).toEqual(briefs.map((brief) => brief.id))
+  })
+
+  it("keeps dependent workers sequential even when the concurrency cap is higher", async () => {
+    const secondBrief = { ...workerBrief, id: "worker-2" }
+    let active = 0
+    let maximumActive = 0
+    const executor: AgentExecutor = {
+      provider: "mock",
+      async executeWorker(brief): Promise<WorkerResult> {
+        active += 1
+        maximumActive = Math.max(maximumActive, active)
+        await Promise.resolve()
+        active -= 1
+        return { worker_id: brief.id, status: "succeeded", output: brief.id, evidence: [] }
+      }
+    }
+
+    await runExecutionPlan({
+      execution_plan: { ...directExecutionPlan, worker_briefs: [workerBrief, secondBrief] },
+      route,
+      executor,
+      concurrency_policy: { max_concurrency: 10 }
+    })
+    expect(maximumActive).toBe(1)
+  })
+
+  it("retries retryable failed results and keeps fatal partial failures", async () => {
+    const secondBrief = { ...workerBrief, id: "worker-2" }
+    const attempts = new Map<string, number>()
+    const executor: AgentExecutor = {
+      provider: "mock",
+      async executeWorker(brief): Promise<WorkerResult> {
+        const attempt = (attempts.get(brief.id) ?? 0) + 1
+        attempts.set(brief.id, attempt)
+        if (brief.id === "worker-1" && attempt === 1) {
+          return {
+            worker_id: brief.id,
+            status: "failed",
+            output: "rate limited",
+            evidence: [],
+            retry_classification: "retryable"
+          }
+        }
+        if (brief.id === "worker-2") {
+          return {
+            worker_id: brief.id,
+            status: "failed",
+            output: "bad request",
+            evidence: [],
+            retry_classification: "fatal"
+          }
+        }
+        return { worker_id: brief.id, status: "succeeded", output: "ok", evidence: [] }
+      }
+    }
+
+    const result = await runExecutionPlan({
+      execution_plan: { ...directExecutionPlan, worker_briefs: [workerBrief, secondBrief] },
+      route,
+      executor,
+      retry_policy: { max_attempts: 3, delay_ms: 0 }
+    })
+
+    expect(attempts.get("worker-1")).toBe(2)
+    expect(attempts.get("worker-2")).toBe(1)
+    expect(result.status).toBe("failed")
+    expect(result.worker_results.map((worker) => worker.status)).toEqual(["succeeded", "failed"])
+  })
+
+  it("fails unsupported executors with a typed error", async () => {
+    await expect(runExecutionPlan({
+      execution_plan: directExecutionPlan,
+      route,
+      executor: createUnsupportedExecutor("future-provider", "runtime is not configured")
+    })).rejects.toBeInstanceOf(UnsupportedExecutorError)
   })
 })

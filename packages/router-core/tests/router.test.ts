@@ -18,7 +18,7 @@ describe("routeTask", () => {
 
     expect(decision.model_class).toBe("small_fast")
     expect(decision.provider).toBe("openai_codex")
-    expect(decision.model_id).toBe("gpt-5.4-mini")
+    expect(decision.model_id).toBe("gpt-5.6-luna")
     expect(decision.delegate).toBe(false)
     expect(decision.add_reviewer).toBe(false)
   })
@@ -60,7 +60,7 @@ describe("routeTask", () => {
     })
 
     expect(decision.model_class).toBe("strong")
-    expect(decision.model_id).toBe("gpt-5.5")
+    expect(decision.model_id).toBe("gpt-5.6-sol")
   })
 
   it("adds reviewer for high-risk review tasks", async () => {

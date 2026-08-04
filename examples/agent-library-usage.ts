@@ -1,4 +1,4 @@
-import { prepareAgentExecution } from "@model-orchestration/router-core"
+import { prepareAgentExecution } from "@garida/core"
 
 const result = await prepareAgentExecution(
   {

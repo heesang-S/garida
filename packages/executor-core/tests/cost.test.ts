@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { estimateTokenCost } from "../src/index.js"
-import type { ModelPricing } from "@model-orchestration/shared-types"
+import type { ModelPricing } from "@garida/types"
 
 const pricing: ModelPricing = {
   input: 2,

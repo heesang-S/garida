@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import { createClaudeCodeExecutor } from "../src/index.js"
 import type { ExecutorRunContext } from "@model-orchestration/executor-core"
-import type { RouteDecision, WorkerBrief } from "@model-orchestration/shared-types"
+import type { RouteDecision, WorkerBrief } from "@garida/types"
 
 const route: RouteDecision = {
   model_class: "strong",

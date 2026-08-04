@@ -1,4 +1,4 @@
-import type { RouteState, RuleCondition, TaskAssessment } from "@model-orchestration/shared-types"
+import type { RouteState, RuleCondition, TaskAssessment } from "@garida/types"
 
 type AssessmentKey = keyof TaskAssessment
 type StateKey = keyof RouteState

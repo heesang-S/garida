@@ -1,15 +1,24 @@
-# Model-Orchestrating Agent
+# Garida
+
+> Experimental MIT-licensed deterministic model-routing and orchestration
+> control layer for TypeScript agents.
+
+Garida is a **public alpha**. It is suitable for evaluation, integration
+experiments, and feedback—not yet for claims of best-in-class quality or
+universal cost savings.
 
 ## Purpose
 
-This project exists to build an agent that can evaluate an incoming task, choose an appropriate model for the work, and orchestrate sub-agents when the task is complex enough to benefit from decomposition.
+This project provides a decision layer that evaluates a structured task,
+chooses an appropriate model class, and emits an explainable execution plan.
+The caller owns model calls and orchestration.
 
-The agent should:
+The routing layer should:
 
 - Understand the task goal, constraints, expected output, and risk level.
 - Select a model that fits the task's complexity, latency needs, cost sensitivity, and required reasoning depth.
 - Break complex work into clear, bounded subtasks.
-- Create sub-agents for independent or specialized subtasks.
+- Describe independent or specialized subtasks when delegation is appropriate.
 - Pass each sub-agent the context, objective, acceptance criteria, and output contract it needs.
 - Merge sub-agent results into a coherent final answer or implementation.
 - Avoid unnecessary delegation for simple tasks.
@@ -35,6 +44,15 @@ Read the [product scope](./docs/product-scope.md) and
 [compatibility notes](./docs/compatibility.md) for supported integrations,
 limitations, and non-goals.
 
+Public evidence is intentionally modest:
+
+- [route-only smoke evaluation](./evals/quick-route-only-2026-07-27.md)
+- [small live Codex evaluation](./evals/small-live-codex-2026-08-02.md)
+- [public-repository capability matrix](./docs/public-repo-capability-matrix.md)
+
+The live sample showed success parity with a fixed-strong baseline, but did
+not establish a reliable cost advantage.
+
 ## Routing Policy Base
 
 The first routing policy artifacts live in `packages/router-core/routing/`:
@@ -58,6 +76,10 @@ The first routing policy artifacts live in `packages/router-core/routing/`:
 - `packages/executor-devin`: unsupported Devin executor stub for planning until usable APIs exist.
 - `packages/executor-claude-code`: unsupported Claude Code executor stub for planning until usable runtime hooks exist.
 
+The active OpenAI/Codex routing tiers are `gpt-5.6-luna` for `small_fast`,
+`gpt-5.6-terra` for `standard`, and `gpt-5.6-sol` for `strong`. GPT-5.4
+remains a compatibility fallback when the GPT-5.6 models are unavailable.
+
 ## Library Usage
 
 Agents should use the package as a decision layer before they call a model or create sub-agents.
@@ -67,7 +89,7 @@ import {
   createExecutionPlan,
   routeTask,
   validateTaskAssessment
-} from "@model-orchestration/router-core"
+} from "@garida/core"
 
 const assessment = await validateTaskAssessment({
   task_type: "debugging",
